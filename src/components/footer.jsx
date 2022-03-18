@@ -1,10 +1,10 @@
-import '../styles/footer.css';
+import styles from '../styles/footer.module.css';
 
 
 export default function Footer() {
     return (
-        <footer className="footer">
-            <p className="p-footer">Website designed by @Bastián Paredes, © 2022</p>
+        <footer className={styles["footer"]}>
+            <p className={styles["p-footer"]}>Website designed by @Bastián Paredes, © 2022</p>
         </footer>
     );
 }

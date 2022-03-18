@@ -28,10 +28,6 @@ export default function Carousel() {
 
     return (
         <div className="carousel">
-            {/* <img className="prevImage" src={require('../carousel images/' + images.current[(images.current.indexOf(currentImage) - 1) % images.current.length])} alt=''/> */}
-            <img className="currentImage" src={require('../carousel images/' + currentImage)} alt={currentImage} />
-            <img className="nextImage" src={require('../carousel images/' + images.current[(images.current.indexOf(currentImage) + 1) % images.current.length])} alt=''/>
-            <button className="btnPrevImage">&lt;</button>
             <button className="btnNextImage">&gt;</button>
         </div>
     );
