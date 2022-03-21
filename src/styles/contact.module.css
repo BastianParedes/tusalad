@@ -1,0 +1,19 @@
+.links-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.link {
+    text-align: center;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    font-size: 32px;
+    margin: 0 20px;
+    transition: .1s ease;
+}
+
+.link:hover {
+    transform: scale(1.2);
+}

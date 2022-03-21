@@ -1,29 +1,14 @@
-.about-section {
-    position: relative;
-    margin: 0 10%;
-}
-
-.tittle {
-    --background-color: rgb(175, 175, 175);
-    text-transform: uppercase;
-    font-size: 1.25rem;
-    background-color: var(--background-color);
-}
-
-.tittle::before {
-    content: "";
-    height: 3px;
-    width: 100%;
-    position: absolute;
-    top: 1.25rem;
-    background-color: var(--background-color);
-    z-index: -1;
-}
 
 .slogan {
-
+    width: 100%;
+    font-size: 44px;
+    text-transform: uppercase;
+    text-align: center;
+    display: inline-block;
+    margin-bottom: 50px;
 }
 
 .content {
-
+    font-size: 22px;
+    text-align: justify;
 }

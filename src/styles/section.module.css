@@ -1,0 +1,26 @@
+.section {
+    position: relative;
+    margin: 0 20% 100px 20%;
+    padding-top: 32px;
+}
+
+.tittle {
+    --background-color: rgb(175, 175, 175);
+    text-transform: uppercase;
+    font-size: 20px;
+}
+
+.tittle::before {
+    content: "";
+    height: 3px;
+    width: 100%;
+    position: absolute;
+    background-color: var(--background-color);
+    z-index: -1;
+}
+
+.tittle-content {
+    background-color: var(--background-color);
+    padding: 0 10px;
+    font-size: 20px;
+}
