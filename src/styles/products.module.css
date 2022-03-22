@@ -11,7 +11,7 @@
 .product-container {
     width: var(--card-width);
     padding: 10px;
-    border: 2px solid;
+    border: 1px solid;
 }
 
 .product-image {
@@ -27,4 +27,6 @@
 
 .product-price {
     display: block;
+    color: rgb(255, 126, 40);
+    font-weight: bold;
 }
