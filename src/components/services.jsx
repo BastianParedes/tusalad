@@ -9,13 +9,13 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import {Autoplay, EffectCards, EffectCube, Keyboard, Navigation, Pagination} from "swiper";
 
-import styles from '../styles/carousel.module.css';
+import styles from '../styles/services.module.css';
 
 export default function Services() {
     return (
         <Section id='services' tittle='Servicios'>
             <Swiper
-                autoplay={{ delay: 2500, disableOnInteraction: false }}
+                autoplay={{ delay: 2500, disableOnInteraction: true }}
                 effect="cube"
                 className={styles['swiper']}
                 cubeEffect={{
@@ -32,25 +32,25 @@ export default function Services() {
                 modules={[Autoplay, EffectCards, EffectCube, Keyboard, Navigation, Pagination]}
             >
                 <SwiperSlide className={styles['swiper-slide']}>
-                    <img className={styles["carousel-image"]} src={require("../images/carousel 1.jpg")} alt="Carousel 1" />
+                    <img className={styles["carousel-image"]} src={require("../images/carousel 1.jpeg")} alt="Carousel 1" />
                 </SwiperSlide>
                 <SwiperSlide className={styles['swiper-slide']}>
-                    <img className={styles["carousel-image"]} src={require("../images/carousel 2.jpg")} alt="Carousel 2" />
+                    <img className={styles["carousel-image"]} src={require("../images/carousel 2.jpeg")} alt="Carousel 2" />
                 </SwiperSlide>
                 <SwiperSlide className={styles['swiper-slide']}>
-                    <img className={styles["carousel-image"]} src={require("../images/carousel 3.jpg")} alt="Carousel 3" />
+                    <img className={styles["carousel-image"]} src={require("../images/carousel 3.jpeg")} alt="Carousel 3" />
                 </SwiperSlide>
                 <SwiperSlide className={styles['swiper-slide']}>
-                    <img className={styles["carousel-image"]} src={require("../images/carousel 4.jpg")} alt="Carousel 4" />
+                    <img className={styles["carousel-image"]} src={require("../images/carousel 4.jpeg")} alt="Carousel 4" />
                 </SwiperSlide>
                 <SwiperSlide className={styles['swiper-slide']}>
-                    <img className={styles["carousel-image"]} src={require("../images/carousel 5.jpg")} alt="Carousel 5" />
+                    <img className={styles["carousel-image"]} src={require("../images/carousel 5.jpeg")} alt="Carousel 5" />
                 </SwiperSlide>
                 <SwiperSlide className={styles['swiper-slide']}>
-                    <img className={styles["carousel-image"]} src={require("../images/carousel 6.jpg")} alt="Carousel 6" />
+                    <img className={styles["carousel-image"]} src={require("../images/carousel 6.jpeg")} alt="Carousel 6" />
                 </SwiperSlide>
                 <SwiperSlide className={styles['swiper-slide']}>
-                    <img className={styles["carousel-image"]} src={require("../images/carousel 7.jpg")} alt="Carousel 7" />
+                    <img className={styles["carousel-image"]} src={require("../images/carousel 7.jpeg")} alt="Carousel 7" />
                 </SwiperSlide>
             </Swiper>
         </Section>

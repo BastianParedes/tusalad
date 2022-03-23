@@ -9,9 +9,12 @@
 
 
 .product-container {
+    position: relative;
     width: var(--card-width);
     padding: 10px;
     border: 1px solid;
+    height: 100%;
+
 }
 
 .product-image {
@@ -23,10 +26,25 @@
 
 .product-name {
     display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 .product-price {
     display: block;
     color: rgb(255, 126, 40);
+    font-size: 1.2rem;
     font-weight: bold;
 }
+
+.product-description {
+    text-align: justify;
+}
+
+.product-included {
+    position: absolute;
+    text-align: justify;
+    font-size: .9rem;
+    bottom: 10px;
+}
+
