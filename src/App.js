@@ -1,4 +1,4 @@
-
+import React from 'react';
 import './styles/general.css'
 
 import Home from './components/home.jsx';
@@ -8,17 +8,41 @@ import Services from './components/services.jsx';
 import Products from './components/products.jsx';
 import Contact from './components/contact.jsx'
 import Footer from './components/footer.jsx';
+import Modal from './components/modal.jsx';
 
-function App() {
+import JSONProducts from './products.json';
+
+const cart = {products: JSONProducts.products.map((product, pos) => { return {
+        id: pos,
+        name: product.name,
+        price: product.price,
+        quantity: 0,
+    };
+})};
+sessionStorage.setItem('cart', JSON.stringify(cart));
+
+
+
+export default function App() {
+    let [openedModal, setOpenedModal] = React.useState(false);
+    let [modalImageName, setModalImageName] = React.useState(null);
+
+
+    let openModal = (newModalImageName) => {
+        setModalImageName(newModalImageName);
+        setOpenedModal(true);
+    }
+    let closeModal = () => setOpenedModal(false);
+
     return (<>
         <Home />
         <Nav />
         <About />
         <Services />
-        <Products />
+        <Products openModal={openModal} />
         <Contact />
         <Footer />
+        {openedModal ? <Modal imageName={modalImageName} closeModal={closeModal}/> : <></>}
     </>);
 }
 
-export default App;

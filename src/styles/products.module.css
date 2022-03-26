@@ -1,3 +1,4 @@
+
 .products {
     --card-width: 300px;
     width: 100%;
@@ -24,6 +25,16 @@
 
 }
 
+.name-price-button-cotainer {
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+
+.name-price-cotainer {
+    flex-grow: 1;
+}
+
 .product-name {
     display: block;
     font-size: 1.5rem;
@@ -35,6 +46,22 @@
     color: rgb(255, 126, 40);
     font-size: 1.2rem;
     font-weight: bold;
+}
+
+.button-add-to-cart-container {
+}
+
+.button-add-to-cart {
+    border: none;
+    height: 100%;
+    padding: 0 50%;
+    float: right;
+    font-size: 2rem;
+    background: rgb(255, 255, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .product-description {

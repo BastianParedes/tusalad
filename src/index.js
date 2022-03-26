@@ -5,7 +5,6 @@ import 'normalize.css';
 
 import App from './App.js';
 
-
 ReactDOM.render(
     <React.StrictMode>
         <App />
