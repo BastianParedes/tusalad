@@ -12,8 +12,8 @@ import Modal from './components/modal.jsx';
 
 import JSONProducts from './products.json';
 
-const cart = {products: JSONProducts.products.map((product, pos) => { return {
-        id: pos,
+const cart = {products: JSONProducts.products.map((product) => { return {
+        id: product.id,
         name: product.name,
         price: product.price,
         quantity: 0,

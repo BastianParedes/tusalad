@@ -12,7 +12,7 @@ function Product(props) {
     let addToCart = () => {
         let cart = sessionStorage.getItem('cart');
         cart = JSON.parse(cart);
-        let product = cart.products.filter(info => info.id === props.id)[0];
+        let product = cart.products.find((info) => info.id === props.id);
         product['quantity']++;
         sessionStorage.setItem('cart', JSON.stringify(cart));
         props.openModal(props.src)
@@ -43,7 +43,7 @@ export default function Products(props) {
     return (
         <Section id='products' tittle='Productos'>
             <div className={styles['products']}>
-                {JSONProducts.products.map((info, pos) => <Product key={pos} id={pos} name={info.name} price={'$ '+info.price} src={info.src} description={info.description} included={info.included}  openModal={props.openModal} />)}
+                {JSONProducts.products.map((info) => <Product key={info.id} id={info.id} name={info.name} price={'$ '+info.price} src={info.src} description={info.description} included={info.included}  openModal={props.openModal} />)}
             </div>
         </Section>
     );

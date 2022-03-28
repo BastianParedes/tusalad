@@ -1,9 +1,52 @@
-
+import React from 'react';
 import { GrClose, GrStatusGood } from 'react-icons/gr';
 
 import styles from '../styles/modal.module.css';
 
+
+
 export default function Modal(props) {
+    let [url, setUrl] = React.useState('');
+    let [token, setToken] = React.useState('');
+
+
+
+    React.useEffect(() => {
+        let cart = sessionStorage.getItem('cart');
+        cart = JSON.parse(cart);
+        let buyingProducts = cart.products.filter((product) => {
+            return product.quantity !== 0;
+        });
+
+        if (buyingProducts.length === 0) { // no permite comprar si el carrito está vacío. Esto puede pasar si el usuario edita el sessionStorage.
+            alert('No agregaste nada al carrito.');
+            return;
+        }
+
+        let totalPrice = 0;
+        buyingProducts.forEach((product) => {
+            totalPrice += product.quantity * product.price;
+        });
+
+        let sendingJSON = { products: buyingProducts};
+
+        fetch('http://localhost:3000/buy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(sendingJSON)
+        })
+        .then(response => response.json())
+        .then(json => {
+            sessionStorage.setItem('url', json.url);
+            sessionStorage.setItem('token', json.token);
+            setUrl()
+            // window.location.href = "http://localhost:3000/cart/";
+            window.location.href = "/cart/";
+        });
+    }, []);
+
+
+
     return (
         <div className={styles['background']}>
             <div className={styles['container']}>
@@ -27,7 +70,7 @@ export default function Modal(props) {
                     <div className={styles['btns-container']}>
                         <button className={styles['btn-keep-buying']} onClick={props.closeModal}>Seguir comprando</button>
                         <button className={styles['btn-cart']}>Ver carrito</button>
-                        <button className={styles['btn-buy-now']}>Comprar ahora</button>
+                        <button className={styles['btn-buy-now']} onClick={buy}>Comprar ahora</button>
                     </div>
                 </div>
             </div>
