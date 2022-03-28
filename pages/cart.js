@@ -26,7 +26,7 @@ export default function App() {
 
         let sendingJSON = { products: buyingProducts};
 
-        fetch('http://localhost:3000/api/buy', {
+        fetch('/api/buy', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(sendingJSON)

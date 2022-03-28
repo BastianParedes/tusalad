@@ -18,12 +18,12 @@ export default async function (request, respond) {
         totalPrice += info.quantity * JSONProduct.price;
     });
 
-
     const buyOrder = 'O-' + Math.floor(Math.random() * 10000) + 1;
     const sessionId = 'S-' + Math.floor(Math.random() * 10000) + 1;
     const amount = totalPrice;
-    const returnUrl = 'http://localhost:3000/api/webpay_plus/commit';
-    // request.protocol + "://" + request.get("host") + "/webpay_plus/commit";
+    const returnUrl = request.headers.origin + '/api/webpay_plus';  //GENERARÁ ERROR?
+
+    
 
     const createResponse = await (new WebpayPlus.Transaction()).create(
         buyOrder,
