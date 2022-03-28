@@ -9,8 +9,6 @@ export default function Modal(props) {
     let [url, setUrl] = React.useState('');
     let [token, setToken] = React.useState('');
 
-
-
     React.useEffect(() => {
         let cart = sessionStorage.getItem('cart');
         cart = JSON.parse(cart);
@@ -39,9 +37,11 @@ export default function Modal(props) {
         .then(json => {
             sessionStorage.setItem('url', json.url);
             sessionStorage.setItem('token', json.token);
-            setUrl()
+            setUrl(json.url);
+            setToken(json.token);
+            
             // window.location.href = "http://localhost:3000/cart/";
-            window.location.href = "/cart/";
+            // window.location.href = "/cart/";
         });
     }, []);
 
@@ -70,7 +70,10 @@ export default function Modal(props) {
                     <div className={styles['btns-container']}>
                         <button className={styles['btn-keep-buying']} onClick={props.closeModal}>Seguir comprando</button>
                         <button className={styles['btn-cart']}>Ver carrito</button>
-                        <button className={styles['btn-buy-now']} onClick={buy}>Comprar ahora</button>
+                        <form action={url} method="POST" className={styles['']}>
+                            <input type="hidden" name="token_ws" value={token}/>
+                            <input className={styles['btn-buy-now']} type="submit" value="Comprar ahora"/>
+                        </form>
                     </div>
                 </div>
             </div>
