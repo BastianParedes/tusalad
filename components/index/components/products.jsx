@@ -1,5 +1,5 @@
 
-import JSONProducts from '/products.json';
+import JSONProducts from '/public/products.json';
 import { BsCartPlus } from 'react-icons/bs'
 import Section from './section.jsx';
 import styles from '../styles/products.module.css';

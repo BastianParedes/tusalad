@@ -1,5 +1,5 @@
 
-import JSONProducts from '/products.json';
+import JSONProducts from '/public/products.json';
 const WebpayPlus = require("transbank-sdk").WebpayPlus;
 const Environment = require('transbank-sdk').Environment;
 

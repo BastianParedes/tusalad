@@ -1,4 +1,4 @@
-import JSONProducts from '../products.json';
+import JSONProducts from '/public/products.json';
 
 import React from 'react';
 import Home from '../components/index/components/home.jsx';
