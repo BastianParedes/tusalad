@@ -4,8 +4,8 @@ import React from 'react';
 
 export default function App() {
 
-    let [url, setUrl] = React.useState(null);
-    let [token, setToken] = React.useState(null);
+    let [url, setUrl] = React.useState('');
+    let [token, setToken] = React.useState('');
 
 
 
@@ -41,18 +41,12 @@ export default function App() {
 
 
 
-
-    React.useEffect(() => {
-        setUrl(sessionStorage.getItem('url'));
-        setToken(sessionStorage.getItem('token'));
-    }, []);
-    
-    
     return (
         <form action={url} method="POST">
             <input type="hidden" name="token_ws" value={token}/>
-            {url === null || token === null ?
-                <input type="submit" value="Pagar" disabled/> : <input type="submit" value="Pagar"/>
+            {url === '' || token === '' ?
+                <input type="submit" value="Pagar" disabled/>
+                : <input type="submit" value="Pagar"/>
             }
         </form>
     );

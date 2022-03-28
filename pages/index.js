@@ -14,7 +14,7 @@ import Modal from '../components/index/components/modal.jsx';
 
 export default function App() {
     let [openedModal, setOpenedModal] = React.useState(false);
-    let [modalImageName, setModalImageName] = React.useState(null);
+    let [modalImageName, setModalImageName] = React.useState('');
 
 
     React.useEffect(() => {
