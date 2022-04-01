@@ -43,11 +43,6 @@ export default function App() {
     }
             
 
-        // console.log(json);
-        
-
-
-
 
     return (
         <form action={url} method="POST" onSubmit={pay}>
