@@ -11,7 +11,6 @@ WebpayPlus.apiKey = process.env.apiKey;
 
 
 export default async function (request, respond) {
-
     let totalPrice = 0;
     request.body.products.forEach((info) => {
         const JSONProduct = JSONProducts.products.find((JSONInfo) => info.id === JSONInfo.id);
@@ -22,7 +21,7 @@ export default async function (request, respond) {
     const sessionId = 'S-' + Math.floor(Math.random() * 10000) + 1;
     const amount = totalPrice;
     const returnUrl = request.headers.origin + '/api/webpay_plus';  //GENERARÁ ERROR?
-
+    console.log(request.headers.origin);
     
 
     const createResponse = await (new WebpayPlus.Transaction()).create(
