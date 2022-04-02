@@ -8,46 +8,44 @@ export default function App() {
     let [token, setToken] = React.useState('');
 
 
-    
     let pay = (event) => {
         event.preventDefault();
         
-        let cart = sessionStorage.getItem('cart');
-        cart = JSON.parse(cart);
-        let buyingProducts = cart.products.filter((product) => product.quantity !== 0 );
+        let cart = JSON.parse(sessionStorage.getItem('cart'));
         
-        if (buyingProducts.length === 0) { // no permite comprar si el carrito está vacío. Esto puede pasar si el usuario edita el sessionStorage.
+        if (cart === {}) { // no permite comprar si el carrito está vacío. Esto puede pasar si el usuario edita el sessionStorage.
             alert('No agregaste nada al carrito.');
             return;
         }
         
-        let totalPrice = 0;
-        buyingProducts.forEach((product) => {
-            totalPrice += product.quantity * product.price;
-        });
-
-        let sendingJSON = { products: buyingProducts};
-
-        fetch('/api/buy', {
+        fetch('/api/pay', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify(sendingJSON)
-
+            body: JSON.stringify(cart)
         }).then(response => response.json()
         ).then(json => {
-            setUrl(json.url);
-            setToken(json.token);
-            event.target.submit();
+            if (json.status === 200) {
+                setUrl(json.url);
+                setToken(json.token);
+                // event.target.submit();
+            } else if (json.status === 400){
+                sessionStorage.setItem('cart', '{}');
+                alert('No hay productos ingresados en el carrito');
+            }
         });
-
     }
-            
 
 
     return (
-        <form action={url} method="POST" onSubmit={pay}>
-            <input type="hidden" name="token_ws" value={token}/>
-            <input type="submit" value="Pagar"/>
+        <form action={url} method='POST' onSubmit={pay}>
+            <input type='text' name='rut' placeholder='rut'/>
+            <input type='text' name='name' placeholder='Nombre y apellido'/>
+            <input type='text' name='e-mail' placeholder='E-mail'/>
+            <input type='text' name='city' placeholder='Ciudad'/>
+            <input type='text' name='address' placeholder='Dirección'/>
+            <input type='hidden' name='token_ws' value={token}/>
+            <input type='submit' value='Pagar'/>
         </form>
     );
 }
+

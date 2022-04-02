@@ -10,10 +10,14 @@ import styles from '../styles/products.module.css';
 function Product(props) {
 
     let addToCart = () => {
-        let cart = sessionStorage.getItem('cart');
-        cart = JSON.parse(cart);
-        let product = cart.products.find((info) => info.id === props.id);
-        product['quantity']++;
+        let cart = JSON.parse(sessionStorage.getItem('cart'));
+        let product = JSONProducts[props.id];
+
+        if (cart[props.id] === undefined) {
+            cart[props.id] = 0;
+        }
+
+        cart[props.id]++;
         sessionStorage.setItem('cart', JSON.stringify(cart));
         props.openModal(props.src)
     }
@@ -43,7 +47,10 @@ export default function Products(props) {
     return (
         <Section id='products' tittle='Productos'>
             <div className={styles['products']}>
-                {JSONProducts.products.map((info) => <Product key={info.id} id={info.id} name={info.name} price={'$ '+info.price} src={info.src} description={info.description} included={info.included}  openModal={props.openModal} />)}
+                {Object.keys(JSONProducts).map((key) => {
+                    const info = JSONProducts[key];
+                    return <Product key={key} id={key} name={info.name} price={'$ '+info.price} src={info.src} description={info.description} included={info.included} openModal={props.openModal} />
+                })}
             </div>
         </Section>
     );

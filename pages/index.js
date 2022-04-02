@@ -1,4 +1,3 @@
-import JSONProducts from '/public/products.json';
 
 import React from 'react';
 import Home from '../components/index/components/home.jsx';
@@ -12,21 +11,13 @@ import Modal from '../components/index/components/modal.jsx';
 
 
 
-export default function App() {
+export default function Index() {
     let [openedModal, setOpenedModal] = React.useState(false);
     let [modalImageName, setModalImageName] = React.useState('');
 
 
     React.useEffect(() => {
-        const cart = {products: JSONProducts.products.map((product) => {
-            return {
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                quantity: 0,
-            };
-        })};
-        window.sessionStorage.setItem('cart', JSON.stringify(cart));
+        window.sessionStorage.setItem('cart', '{}');
     }, []);
 
 
@@ -34,6 +25,7 @@ export default function App() {
         setModalImageName(newModalImageName);
         setOpenedModal(true);
     }
+
     let closeModal = () => setOpenedModal(false);
 
 
