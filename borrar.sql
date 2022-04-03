@@ -1,0 +1,1 @@
+UPDATE `tu-salad`.`receipts` SET `payment method` = ' tyju', `city` = 'yj' WHERE `token_ws` = '01ab7d774e642ff22aefe86c7f6401e8505c71259f997230edb62ebc2d65a0ec');

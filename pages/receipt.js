@@ -1,17 +1,17 @@
 
 import JSONProducts from '/public/products.json';
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 import React from 'react';
 
 export default function getStaticProps(context) {
     const router = useRouter();
-    const token = router.query.token_ws;
+    const token_ws = router.query.token_ws;
     
-    if (token !== undefined) {
-        fetch('/api/db', {
+    if (token_ws !== undefined) {
+        fetch('/api/querydb', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({token})
+            body: JSON.stringify({token_ws})
         }).then(response => response.json()
         ).then(json => {
 
