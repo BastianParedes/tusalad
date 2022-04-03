@@ -1,6 +1,6 @@
 
 import JSONProducts from '/public/products.json';
-const mysql = require('mysql');
+const mysql = require('mysql2/promise');
 const WebpayPlus = require("transbank-sdk").WebpayPlus;
 const Environment = require('transbank-sdk').Environment;
 
@@ -12,70 +12,96 @@ WebpayPlus.apiKey = process.env.apiKey;
 
 
 export default async function Pay(request, respond) {
-    const cart = request.body;
-    if (typeof cart !== 'object') {//termina la ejecución si el body no es un objeto
+
+    if (typeof request.body.cart !== 'object') {//termina la ejecución si el body no es un objeto
         respond.json({status: 400});
         return;
     }
 
-
-    let totalPrice = 0;
-    for (let key in cart) {
+    const DBcart = {};
+    let amount = 0;
+    for (let key in request.body.cart) {
         const product = JSONProducts[key];
-        if (product !== undefined) {
-            totalPrice += product['price'];
+        if (product !== undefined) {//comprueba que la key sea válida
+            if (typeof request.body.cart[key] === 'number') {//comprueba que la cantidad solcitiada de ese producto sea realmente un número
+                let quantity = request.body.cart[key];
+                if (quantity > 0 && Number.isInteger(quantity)) {
+                    amount += quantity * product['price'];
+                    DBcart[key] = quantity;
+                }
+            }
         }
     }
-    
-    if (totalPrice === 0) {// termina la ejecución si el precio total es 0. Esto puede pasar si se altera el sessionStorage ingresando valores inválidos o si un bug hace que no se hayan guardado
+
+    if (amount === 0) {// termina la ejecución si el precio total es 0. Esto puede pasar si se altera el sessionStorage ingresando valores inválidos o si un bug hace que no se hayan guardado
         respond.json({status: 400});
         return;
     }
 
-    const buyOrder = 'O-' + Math.floor(Math.random() * 10000) + 1;
-    const sessionId = 'S-' + Math.floor(Math.random() * 10000) + 1;
-    const amount = totalPrice;
-    const returnUrl = request.headers.origin + '/receipt';  //GENERARÁ ERROR?
+
+    const promiseConnection = await mysql.createConnection({
+        host: process.env.sqlHost,
+        user: process.env.sqlUser,
+        password: process.env.sqlPassword,
+        database: process.env.sqlDB,
+    });
+
+
+
+    var response = await promiseConnection.query(`SELECT \`buyOrder\` FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrder\`=(SELECT max(\`buyOrder\`) FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\`)`);
+    let buyOrder;
+    if (response[0].length !== 0) {
+        buyOrder = response[0][0].buyOrder + 1;
+    } else if (response[0].length === 0) {
+        buyOrder = 0;
+    }
     
     const createResponse = await (new WebpayPlus.Transaction()).create(
-        buyOrder,
-        sessionId,
+        'O-' + buyOrder, //orden de compra
+        'S-' + buyOrder, //session id
         amount,
-        returnUrl
+        request.headers.origin + '/receipt'  //return URL    //GENERARÁ ERROR?
     );
 
-    const token = createResponse.token;
-    const url = createResponse.url;
-    const viewData = {
+
+    const data = {
         buyOrder,
-        sessionId,
+        token_ws: createResponse.token,
+        status: 'iniciado',
         amount,
-        returnUrl,
-        token,
-        url,
+        rut: request.body.rut,
+        name: request.body.name,
+        'e-mail': request.body['e-mail'],
+        products: JSON.stringify(DBcart),
+        'payment method': ' ',
+        city: request.body.city,
+        address: request.body.address,
+        year: new Date().getFullYear(),
+        date: new Date().getDate(),
+        hour: new Date().getHours(),
+        minute: new Date().getMinutes()
     };
 
 
 
 
-    // con.connect(function(err) {
-    //     if (err) throw err;
-    //     console.log("Connected!");
-    //     var sql = "INSERT INTO customers (name, address) VALUES ('Company Inc', 'Highway 37')";
-    //     con.query(sql, function (err, result) {
-    //       if (err) throw err;
-    //       console.log("1 record inserted");
-    //     });
-    //   });
+    var response = await promiseConnection.query(`DESCRIBE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\``);
+    let fields = response[0].map(column => column.Field);
+    let sqlFields = '(`' + fields.join('`,`') + '`)';
 
+    let sqlValues = '('
+    
+    for (let field of fields) {
+        sqlValues += `\'${data[field].toString().replaceAll('\\','\\\\').replaceAll('\'','\\\'')}\',`;
+    }
+    sqlValues = sqlValues.slice(0, -1) + ')';
+    console.log(sqlValues);
 
-
-
-
+    await promiseConnection.query(`INSERT INTO \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` ${sqlFields} VALUES ${sqlValues};`);
 
     respond.json({
         status: 200,
-        token,
-        url
+        token: createResponse.token,
+        url: createResponse.url
     });
 };
