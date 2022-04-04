@@ -22,7 +22,8 @@ export default async function Db(request, response) {
 
     const transaction = new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration));
     const webpayPlusStatus = await transaction.commit(token_ws);
-    await promiseConnection.execute(`UPDATE \`tu-salad\`.\`receipts\` SET \`status\` = '${webpayPlusStatus.status}' WHERE (\`token_ws\` = '${token_ws}');`);
+    await promiseConnection.execute(`UPDATE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` SET \`status\` = '${webpayPlusStatus.status}' WHERE (\`token_ws\` = '${token_ws}');`);
+    await promiseConnection.end();
 
     response.redirect(307, `/receipt?token_ws=${token_ws}`);
 }

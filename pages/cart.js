@@ -13,7 +13,7 @@ export default function App() {
         const body = JSON.stringify({
             rut: event.target.rut.value,
             name: event.target.name.value,
-            'e-mail': event.target['e-mail'].value,
+            e_mail: event.target.e_mail.value,
             city: event.target.city.value,
             address: event.target.address.value,
             cart: JSON.parse(sessionStorage.getItem('cart'))
@@ -58,7 +58,7 @@ export default function App() {
 
 
     return (
-        <form action={url} method='POST' onSubmit={pay}>
+        <form action={url} method='GET' onSubmit={pay}>
             <input type='text' name='rut' placeholder='rut' defaultValue='19.111.648-8' />
             <input type='text' name='name' placeholder='Nombre' defaultValue='Bastián' />
             <input type='text' name='e_mail' placeholder='E-mail' defaultValue='bastian.p@outlook.com' />

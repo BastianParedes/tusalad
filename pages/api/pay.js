@@ -91,6 +91,7 @@ export default async function Pay(request, response) {
     sqlValues = sqlValues.slice(0, -1) + ')';
 
     await promiseConnection.execute(`INSERT INTO \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` ${sqlFields} VALUES ${sqlValues};`);
+    await promiseConnection.end();
 
     response.json({
         status: 200,
