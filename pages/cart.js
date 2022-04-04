@@ -61,7 +61,7 @@ export default function App() {
         <form action={url} method='POST' onSubmit={pay}>
             <input type='text' name='rut' placeholder='rut' defaultValue='19.111.648-8' />
             <input type='text' name='name' placeholder='Nombre' defaultValue='Bastián' />
-            <input type='text' name='e-mail' placeholder='E-mail' defaultValue='bastian.p@outlook.com' />
+            <input type='text' name='e_mail' placeholder='E-mail' defaultValue='bastian.p@outlook.com' />
             <select name='city'>
                 <option value='Puerto Montt'>Puerto Montt</option>
                 <option value='Puerto Varas'>Puerto Varas</option>

@@ -8,10 +8,10 @@ const Environment = transbank.Environment;
 const Options = transbank.Options;
 
 
-export default async function Pay(request, respond) {
+export default async function Pay(request, response) {
 
     if (typeof request.body.cart !== 'object') {//termina la ejecución si el body no es un objeto
-        respond.json({status: 400});
+        response.json({status: 400});
         return;
     }
 
@@ -32,7 +32,7 @@ export default async function Pay(request, respond) {
 
 
     if (amount === 0) {// termina la ejecución si el precio total es 0. Esto puede pasar si se altera el sessionStorage ingresando valores inválidos o si un bug hace que no se hayan guardado
-        respond.json({status: 400});
+        response.json({status: 400});
         return;
     }
 
@@ -46,52 +46,53 @@ export default async function Pay(request, respond) {
 
 
 
-    var response = await promiseConnection.query(`SELECT \`buyOrder\` FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrder\`=(SELECT max(\`buyOrder\`) FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\`)`);
+    var queryResponse = await promiseConnection.query(`SELECT \`buyOrder\` FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrder\`=(SELECT max(\`buyOrder\`) FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\`)`);
     let buyOrder;
-    if (response[0].length !== 0) {
-        buyOrder = response[0][0].buyOrder + 1;
-    } else if (response[0].length === 0) {
+    if (queryResponse[0].length !== 0) {
+        buyOrder = queryResponse[0][0].buyOrder + 1;
+    } else if (queryResponse[0].length === 0) {
         buyOrder = 0;
     }
-
 
     const transaction = await new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration)).create(
         'TU-SALAD-' + buyOrder, //orden de compra
         'S-' + buyOrder, //session id
         amount,
-        request.headers.origin + '/receipt'  //return URL    //GENERARÁ ERROR?
+        request.headers.origin + '/api/endpayment'  //return URL    //GENERARÁ ERROR?
     );
 
 
-    const data = {
+    const date = new Date();
+    const DBVaules = {
         buyOrder,
         token_ws: transaction.token,
+        status: 'INITIALIZED',
         amount,
         rut: request.body.rut,
         name: request.body.name,
-        e_mail: request.body['e-mail'],
+        e_mail: request.body.e_mail,
         products: JSON.stringify(DBcart),
         city: request.body.city,
         address: request.body.address,
+        date: `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}-${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     };
 
 
 
-
-    var response = await promiseConnection.query(`DESCRIBE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\``);
-    let fields = response[0].map(column => column.Field);
+    var queryResponse = await promiseConnection.query(`DESCRIBE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\``);
+    let fields = queryResponse[0].map(column => column.Field);
     let sqlFields = '(`' + fields.join('`,`') + '`)';
 
     let sqlValues = '('
-    
+
     for (let field of fields) {
-        sqlValues += `\'${data[field].toString().replaceAll('\\','\\\\').replaceAll('\'','\\\'')}\',`;
+        sqlValues += `\'${DBVaules[field].toString().replaceAll('\\','\\\\').replaceAll('\'','\\\'')}\',`;
     }
     sqlValues = sqlValues.slice(0, -1) + ')';
 
-    await promiseConnection.query(`INSERT INTO \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` ${sqlFields} VALUES ${sqlValues};`);
+    await promiseConnection.execute(`INSERT INTO \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` ${sqlFields} VALUES ${sqlValues};`);
 
-    respond.json({
+    response.json({
         status: 200,
         token_ws: transaction.token,//no cambiar a token_ws
         url: transaction.url

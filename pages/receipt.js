@@ -1,7 +1,7 @@
 
 import JSONProducts from '/public/products.json';
-import { useRouter } from 'next/router';
 import React from 'react';
+import { useRouter } from 'next/router';
 
 export default function getStaticProps(context) {
     const router = useRouter();
@@ -14,9 +14,7 @@ export default function getStaticProps(context) {
             body: JSON.stringify({token_ws})
         }).then(response => response.json()
         ).then(json => {
-
             console.log(json);
-
         });
     }
 
