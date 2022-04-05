@@ -1,5 +1,5 @@
 // 4051 8842 3993 7763
-import JSONProducts from '/public/products.json';
+import JSONProducts from '../../public/products.json';
 const mysql = require('mysql2/promise');
 const transbank = require('transbank-sdk');
 
