@@ -16,7 +16,7 @@ export default async function Pay(request, response) {
     }
 
     const DBcart = {};
-    let amount = 0;
+    let amount: number = 0;
     for (let key in request.body.cart) {
         const product = JSONProducts[key];
         if (product !== undefined) {//comprueba que la key sea válida
@@ -46,17 +46,17 @@ export default async function Pay(request, response) {
 
 
 
-    var queryResponse = await promiseConnection.query(`SELECT \`buyOrder\` FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrder\`=(SELECT max(\`buyOrder\`) FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\`)`);
-    let buyOrder;
+    var queryResponse = await promiseConnection.query(`SELECT \`buyOrderNumber\` FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrderNumber\`=(SELECT max(\`buyOrderNumber\`) FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\`)`);
+    let buyOrderNumber: number;
     if (queryResponse[0].length !== 0) {
-        buyOrder = queryResponse[0][0].buyOrder + 1;
+        buyOrderNumber = queryResponse[0][0].buyOrderNumber + 1;
     } else if (queryResponse[0].length === 0) {
-        buyOrder = 0;
+        buyOrderNumber = 0;
     }
 
     const transaction = await new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration)).create(
-        'TU-SALAD-' + buyOrder, //orden de compra
-        'S-' + buyOrder, //session id
+        'ORDER-' + buyOrderNumber, //orden de compra
+        'SESSION-' + buyOrderNumber, //session id
         amount,
         request.headers.origin + '/api/endpayment'  //return URL    //GENERARÁ ERROR?
     );
@@ -64,7 +64,7 @@ export default async function Pay(request, response) {
 
     const date = new Date();
     const DBVaules = {
-        buyOrder,
+        buyOrderNumber,
         token_ws: transaction.token,
         status: 'INITIALIZED',
         amount,
@@ -74,16 +74,16 @@ export default async function Pay(request, response) {
         products: JSON.stringify(DBcart),
         city: request.body.city,
         address: request.body.address,
-        date: `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}-${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+        date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}-${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     };
 
 
 
     var queryResponse = await promiseConnection.query(`DESCRIBE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\``);
-    let fields = queryResponse[0].map(column => column.Field);
-    let sqlFields = '(`' + fields.join('`,`') + '`)';
+    let fields:string[] = queryResponse[0].map(column => column.Field);
+    let sqlFields: string = '(`' + fields.join('`,`') + '`)';
 
-    let sqlValues = '('
+    let sqlValues: string = '('
 
     for (let field of fields) {
         sqlValues += `\'${DBVaules[field].toString().replaceAll('\\','\\\\').replaceAll('\'','\\\'')}\',`;

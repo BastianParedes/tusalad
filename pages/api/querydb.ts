@@ -8,7 +8,7 @@ const Options = transbank.Options;
 
 
 export default async function Db(request, response) {
-    const token_ws = request.body.token_ws;
+    const token_ws: string = request.body.token_ws;
 
     const promiseConnection = await mysql.createConnection({
         host: process.env.sqlHost,
@@ -25,7 +25,7 @@ export default async function Db(request, response) {
 
 
     promiseConnection.end();
-    response.json({...webpayPlusStatus, ...DBData});
+    response.json({...DBData, ...webpayPlusStatus});
 }
 
 

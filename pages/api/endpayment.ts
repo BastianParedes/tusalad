@@ -8,10 +8,15 @@ const Options = transbank.Options;
 
 
 export default async function Db(request, response) {
-    if (request.method !== 'GET') {
-        return;    
+    if (request.method !== 'GET' && request.method !== 'POST') {
+        return;
     }
-    const token_ws = request.query.token_ws;
+    const token_ws: string = request.method === 'GET' ? request.query.token_ws : request.body.TBK_TOKEN;
+
+
+    const transaction = new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration));
+    const webpayPlusStatus = await transaction.commit(token_ws);    //ARREGLAR YA QUE NO SE PUEDE USAR SI EL USUARIO CANCELA ANTES DE PAGAR
+
 
     const promiseConnection = await mysql.createConnection({
         host: process.env.sqlHost,
@@ -20,10 +25,9 @@ export default async function Db(request, response) {
         database: process.env.sqlDB,
     });
 
-    const transaction = new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration));
-    const webpayPlusStatus = await transaction.commit(token_ws);
     await promiseConnection.execute(`UPDATE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` SET \`status\` = '${webpayPlusStatus.status}' WHERE (\`token_ws\` = '${token_ws}');`);
     await promiseConnection.end();
+
 
     response.redirect(307, `/receipt?token_ws=${token_ws}`);
 }
@@ -97,3 +101,11 @@ export default async function Db(request, response) {
 //     response_code: 0,
 //     installments_number: 0
 //   }
+
+
+// CLIENTE ANULA LA COMPRA ANTES DE PAGAR
+// [Object: null prototype] {
+//     TBK_TOKEN: '01ab0162729c673a3254c238b960295405a7641b8eab12f626dddf9729edf229',
+//     TBK_ORDEN_COMPRA: 'TU-SALAD-15',
+//     TBK_ID_SESION: 'S-15'
+// }
