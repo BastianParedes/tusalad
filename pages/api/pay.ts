@@ -1,5 +1,5 @@
 // 4051 8842 3993 7763
-const JSONProducts: any = require('../../public/products.json');
+const JSONProducts: any = require('/public/products.json');
 const mysql = require('mysql2/promise');
 const transbank = require('transbank-sdk');
 
@@ -93,7 +93,7 @@ export default async function Pay(request: any, response: any) {
 
     response.json({
         status: 200,
-        token_ws: transaction.token,//no cambiar a token_ws
+        token: transaction.token,
         url: transaction.url
     });
 };

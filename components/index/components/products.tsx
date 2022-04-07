@@ -1,5 +1,5 @@
 
-import JSONProducts from '../../../public/products.json';
+const JSONProducts: any = require('/public/products.json');
 import { BsCartPlus } from 'react-icons/bs'
 import Section from './section';
 import styles from '../styles/products.module.css';
@@ -23,7 +23,7 @@ type ProducstProps = {
 function Product(props: ProductProps) {
 
     let addToCart = () => {
-        let cart = JSON.parse(sessionStorage.getItem('cart'));
+        let cart = JSON.parse(sessionStorage.getItem('cart') || '{}');
 
         if (cart[props.id] === undefined) {// agrega el id al carrito si no existe
             cart[props.id] = 0;

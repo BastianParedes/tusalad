@@ -47,7 +47,7 @@ export default function App() {
                 setUrl(json.url);
                 setToken(json.token);
                 event.target.submit();
-            } else if (json.status === 400){
+            } else {
                 sessionStorage.setItem('cart', '{}');
                 alert('No hay productos ingresados en el carrito');
             }

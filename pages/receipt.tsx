@@ -1,5 +1,5 @@
 
-import JSONProducts from '../public/products.json';
+const JSONProducts: any = require('/public/products.json');
 import React from 'react';
 import { useRouter } from 'next/router';
 
