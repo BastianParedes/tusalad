@@ -15,8 +15,10 @@ export default function App() {
     return (
         <React.StrictMode>
             <div className={styles['cart']}>
-                <Main />
-                <Aside />
+                <div className={styles['cart__div']}>
+                    <Main />
+                    <Aside />
+                </div>
                 <Footer />
             </div>
             

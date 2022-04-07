@@ -1,8 +1,4 @@
 .main {
     position: relative;
-    grid-column: 1;
-    grid-row: 1;
-    background-color: green;
-    margin: 0;
-    padding: 0%;
+    flex-grow: 1;
 }
