@@ -1,5 +1,5 @@
 // 4051 8842 3993 7763
-import JSONProducts from '../../public/products.json';
+const JSONProducts: any = require('../../public/products.json');
 const mysql = require('mysql2/promise');
 const transbank = require('transbank-sdk');
 
@@ -8,17 +8,17 @@ const Environment = transbank.Environment;
 const Options = transbank.Options;
 
 
-export default async function Pay(request, response) {
+export default async function Pay(request: any, response: any) {
 
     if (typeof request.body.cart !== 'object') {//termina la ejecución si el body no es un objeto
         response.json({status: 400});
         return;
     }
 
-    const DBcart = {};
+    const DBcart: any = {};
     let amount: number = 0;
     for (let key in request.body.cart) {
-        const product = JSONProducts[key];
+        const product: {name: string, price: number, src: string, description: string, included: string} = JSONProducts[key];
         if (product !== undefined) {//comprueba que la key sea válida
             if (typeof request.body.cart[key] === 'number') {//comprueba que la cantidad solcitiada de ese producto sea realmente un número
                 let quantity = request.body.cart[key];
@@ -47,11 +47,9 @@ export default async function Pay(request, response) {
 
 
     var queryResponse = await promiseConnection.query(`SELECT \`buyOrderNumber\` FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrderNumber\`=(SELECT max(\`buyOrderNumber\`) FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\`)`);
-    let buyOrderNumber: number;
+    let buyOrderNumber: number = 0;
     if (queryResponse[0].length !== 0) {
         buyOrderNumber = queryResponse[0][0].buyOrderNumber + 1;
-    } else if (queryResponse[0].length === 0) {
-        buyOrderNumber = 0;
     }
 
     const transaction = await new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration)).create(
@@ -63,7 +61,7 @@ export default async function Pay(request, response) {
 
 
     const date = new Date();
-    const DBVaules = {
+    const DBVaules: any = {
         buyOrderNumber,
         token: transaction.token,
         status: 'INITIALIZED',
@@ -80,7 +78,7 @@ export default async function Pay(request, response) {
 
 
     var queryResponse = await promiseConnection.query(`DESCRIBE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\``);
-    let fields:string[] = queryResponse[0].map(column => column.Field);
+    let fields:string[] = queryResponse[0].map((column: any) => column.Field);
     let sqlFields: string = '(`' + fields.join('`,`') + '`)';
 
     let sqlValues: string = '('

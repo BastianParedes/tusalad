@@ -7,34 +7,32 @@ export default function App() {
     let [url, setUrl] = React.useState('');
     let [token, setToken] = React.useState('');
 
-    let pay = (event) => {
+    let pay = (event: any) => {
         event.preventDefault();
         
-        const data: {rut:string, name:string, e_mail:string, city:string, address:string, cart:{}} = {
-            rut: event.target.rut.value,
-            name: event.target.name.value,
-            e_mail: event.target.e_mail.value,
-            city: event.target.city.value,
-            address: event.target.address.value,
-            cart: JSON.parse(sessionStorage.getItem('cart'))
-        };
+        const rut: string = event.target.rut.value;
+        const name: string = event.target.name.value;
+        const e_mail: string = event.target.e_mail.value;
+        const city: string = event.target.city.value;
+        const address: string = event.target.rut.value;
+        const cart: any = JSON.parse(sessionStorage.getItem('cart') || '{}');
 
-        if (data.rut === '') {
+        if (rut === '') {
             alert('No has ingresado tu rut');
             return;
-        } else if (data.name === '') {
+        } else if (name === '') {
             alert('No has ingresado tu nombre');
             return;
-        } else if (data.e_mail === '') {
+        } else if (e_mail === '') {
             alert('No has ingresado tu E-mail');
             return;
-        } else if (data.city === '') {
+        } else if (city === '') {
             alert('No has ingresado tu ciudad');
             return;
-        } else if (data.address === '') {
+        } else if (address === '') {
             alert('No has ingresado tu dirección');
             return;
-        } else if (data.cart === {}) { // no permite comprar si el carrito está vacío. Esto puede pasar si el usuario edita el sessionStorage.
+        } else if (cart === {}) { // no permite comprar si el carrito está vacío. Esto puede pasar si el usuario edita el sessionStorage.
             alert('No agregaste nada al carrito.');
             return;
         }
@@ -42,7 +40,7 @@ export default function App() {
         fetch('/api/pay', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
+            body: JSON.stringify({rut, name, e_mail, city, address, cart})
         }).then(response => response.json()
         ).then(json => {
             if (json.status === 200) {
@@ -56,7 +54,7 @@ export default function App() {
         });
     }
 
-    let fixRut = (event): undefined => {
+    let fixRut = (event: any): undefined => {
         const validCharacters: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'k'];
         const currentRut: string = event.target.value;
         let newRut: string = '';

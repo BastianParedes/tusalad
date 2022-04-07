@@ -10,7 +10,7 @@ const Options = transbank.Options;
 // Si se cancela antes en el botón, usa post y tiene TBK_TOKEN, TBK_ORDEN_COMPRA, TBK_ID_SESION
 // http://localhost:3000/api/endpayment?TBK_ORDEN_COMPRA=ORDER-19&TBK_ID_SESION=SESSION-19
 
-export default async function Db(request, response) {
+export default async function Db(request: any, response: any) {
 
     const transaction = new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration));
 

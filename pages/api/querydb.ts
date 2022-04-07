@@ -7,7 +7,7 @@ const Environment = transbank.Environment;
 const Options = transbank.Options;
 
 
-export default async function Db(request, response) {
+export default async function Db(request: any, response: any) {
     const token: string = request.body.token;
 
     const promiseConnection = await mysql.createConnection({

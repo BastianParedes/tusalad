@@ -16,17 +16,19 @@ export default function Index() {
     let [modalImageName, setModalImageName] = React.useState('');
 
 
-    React.useEffect(() => {
+    React.useEffect((): void => {
         window.sessionStorage.setItem('cart', '{}');
     }, []);
 
 
-    let openModal: any = (newModalImageName: string) : void=> {
+    let openModal = (newModalImageName: string) : void => {
         setModalImageName(newModalImageName);
         setOpenedModal(true);
     }
 
-    let closeModal: any = () => setOpenedModal(false);
+    let closeModal = (): void => {
+        setOpenedModal(false);
+    }
 
 
     return (
