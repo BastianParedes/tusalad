@@ -3,7 +3,7 @@ import JSONProducts from '../public/products.json';
 import React from 'react';
 import { useRouter } from 'next/router';
 
-export default function getStaticProps(context) {
+export default function getStaticProps() {
     const router = useRouter();
     const token = router.query.token;
     let [info, setInfo] = React.useState({});

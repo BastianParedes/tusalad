@@ -3,9 +3,13 @@ import { GrClose, GrStatusGood } from 'react-icons/gr';
 
 import styles from '../styles/modal.module.css';
 
+type ModalProps = {
+    imageName: string ,
+    closeModal: any//funcion
+}
 
 
-export default function Modal(props) {
+export default function Modal(props: ModalProps) {
 
     let goToCart = () => {
         window.location.href = "/cart";

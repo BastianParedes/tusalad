@@ -7,26 +7,25 @@ import styles from '../styles/products.module.css';
 type ProductProps = {
     id: string,
     name: string,
-    price: string
+    price: number,
     src: string,
     description: string,
     included: string,
-    openModal: any
+    openModal: any//funcion
 }
 
 
 
 type ProducstProps = {
-    openModal: any
+    openModal: any//funcion
 }
 
 function Product(props: ProductProps) {
 
     let addToCart = () => {
         let cart = JSON.parse(sessionStorage.getItem('cart'));
-        let product: {name:string,price:number,src:string,description:string,included:string} = JSONProducts[props.id];
 
-        if (cart[props.id] === undefined) {
+        if (cart[props.id] === undefined) {// agrega el id al carrito si no existe
             cart[props.id] = 0;
         }
 
@@ -41,11 +40,10 @@ function Product(props: ProductProps) {
             <div className={styles['name-price-button-cotainer']}>
                 <div className={styles['name-price-cotainer']}>
                     <span className={styles['product-name']}>{props.name}</span>
-                    <span className={styles['product-price']}>{props.price}</span>
+                    <span className={styles['product-price']}>{'$ '+ props.price}</span>
                 </div>
                 <div className={styles['button-add-to-cart-container']}>
-                    <button className={styles['button-add-to-cart']} onClick={addToCart}>
-                        <BsCartPlus />
+                    <button className={styles['button-add-to-cart']} onClick={addToCart}> <BsCartPlus />
                     </button>
                 </div>                
             </div>
@@ -61,8 +59,8 @@ export default function Products(props: ProducstProps) {
         <Section id='products' tittle='Productos'>
             <div className={styles['products']}>
                 {Object.keys(JSONProducts).map((key) => {
-                    const info = JSONProducts[key];
-                    return <Product key={key} id={key} name={info.name} price={'$ '+info.price} src={info.src} description={info.description} included={info.included} openModal={props.openModal} />
+                    const info: {name: string, price: number, src: string, description: string, included: string} = JSONProducts[key];
+                    return <Product key={key} id={key} name={info.name} price={info.price} src={info.src} description={info.description} included={info.included} openModal={props.openModal} />
                 })}
             </div>
         </Section>
