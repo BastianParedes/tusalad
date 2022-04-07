@@ -8,7 +8,7 @@ const Options = transbank.Options;
 
 
 export default async function Db(request, response) {
-    const token_ws: string = request.body.token_ws;
+    const token: string = request.body.token;
 
     const promiseConnection = await mysql.createConnection({
         host: process.env.sqlHost,
@@ -17,11 +17,11 @@ export default async function Db(request, response) {
         database: process.env.sqlDB,
     });
 
-    const queryResponse = await promiseConnection.query(`SELECT * FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE (\`token_ws\` = '${token_ws}');`);
+    const queryResponse = await promiseConnection.query(`SELECT * FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE (\`token\` = '${token}');`);
     const DBData = queryResponse[0][0];
 
     const transaction = new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration));
-    const webpayPlusStatus = await transaction.status(token_ws);
+    const webpayPlusStatus = await transaction.status(token);
 
 
     promiseConnection.end();
@@ -49,19 +49,3 @@ export default async function Db(request, response) {
 //   });
 
 
-
-// CREATE TABLE `b8dwf2kovvcuvrsmnudk`.`receipts` (
-//     `buyOrder` INT NOT NULL,
-//     `token_ws` VARCHAR(128) NOT NULL,
-//     `status` VARCHAR(45) NOT NULL,
-//     `amount` INT NOT NULL,
-//     `rut` VARCHAR(45) NOT NULL,
-//     `name` VARCHAR(50) NOT NULL,
-//     `e_mail` VARCHAR(45) NOT NULL,
-//     `products` VARCHAR(255) NOT NULL,
-//     `city` VARCHAR(45) NOT NULL,
-//     `address` VARCHAR(50) NOT NULL,
-//     `date` VARCHAR(45) NOT NULL,
-//     PRIMARY KEY (`buyOrder`, `token_ws`),
-//     UNIQUE INDEX `buyOrder_UNIQUE` (`buyOrder` ASC) VISIBLE,
-//     UNIQUE INDEX `token_ws_UNIQUE` (`token_ws` ASC) VISIBLE);

@@ -1,17 +1,30 @@
 
-import JSONProducts from '/public/products.json';
+import JSONProducts from '../../../public/products.json';
 import { BsCartPlus } from 'react-icons/bs'
-import Section from './section.jsx';
+import Section from './section';
 import styles from '../styles/products.module.css';
 
+type ProductProps = {
+    id: string,
+    name: string,
+    price: string
+    src: string,
+    description: string,
+    included: string,
+    openModal: any
+}
 
 
 
-function Product(props) {
+type ProducstProps = {
+    openModal: any
+}
+
+function Product(props: ProductProps) {
 
     let addToCart = () => {
         let cart = JSON.parse(sessionStorage.getItem('cart'));
-        let product = JSONProducts[props.id];
+        let product: {name:string,price:number,src:string,description:string,included:string} = JSONProducts[props.id];
 
         if (cart[props.id] === undefined) {
             cart[props.id] = 0;
@@ -43,7 +56,7 @@ function Product(props) {
 }
 
 
-export default function Products(props) {
+export default function Products(props: ProducstProps) {
     return (
         <Section id='products' tittle='Productos'>
             <div className={styles['products']}>

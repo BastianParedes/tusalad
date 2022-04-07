@@ -5,7 +5,7 @@ import React from 'react';
 export default function App() {
 
     let [url, setUrl] = React.useState('');
-    let [token_ws, setToken_ws] = React.useState('');
+    let [token, setToken] = React.useState('');
 
     let pay = (event) => {
         event.preventDefault();
@@ -47,7 +47,7 @@ export default function App() {
         ).then(json => {
             if (json.status === 200) {
                 setUrl(json.url);
-                setToken_ws(json.token_ws);
+                setToken(json.token);
                 event.target.submit();
             } else if (json.status === 400){
                 sessionStorage.setItem('cart', '{}');
@@ -88,7 +88,7 @@ export default function App() {
                 <option value='Puerto Varas'>Puerto Varas</option>
             </select>
             <input type='text' name='address' placeholder='Dirección' defaultValue='Crónica #2202' />
-            <input type='hidden' name='token_ws' defaultValue={token_ws} />
+            <input type='hidden' name='token_ws' defaultValue={token} />
             <input type='submit' value='Pagar' />
         </form>
     );

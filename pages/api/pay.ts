@@ -55,8 +55,8 @@ export default async function Pay(request, response) {
     }
 
     const transaction = await new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration)).create(
-        'ORDER-' + buyOrderNumber, //orden de compra
-        'SESSION-' + buyOrderNumber, //session id
+        buyOrderNumber.toString(), //orden de compra
+        buyOrderNumber.toString(), //session id
         amount,
         request.headers.origin + '/api/endpayment'  //return URL    //GENERARÁ ERROR?
     );
@@ -65,7 +65,7 @@ export default async function Pay(request, response) {
     const date = new Date();
     const DBVaules = {
         buyOrderNumber,
-        token_ws: transaction.token,
+        token: transaction.token,
         status: 'INITIALIZED',
         amount,
         rut: request.body.rut,

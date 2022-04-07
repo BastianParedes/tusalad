@@ -5,18 +5,17 @@ import { useRouter } from 'next/router';
 
 export default function getStaticProps(context) {
     const router = useRouter();
-    const token_ws = router.query.token_ws;
+    const token = router.query.token;
     let [info, setInfo] = React.useState({});
     
     React.useEffect(() => {
-        if (token_ws !== undefined) {
+        if (token !== undefined) {
             fetch('/api/querydb', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({token_ws})
+                body: JSON.stringify({token})
             }).then(response => response.json()
             ).then(json => {
-                console.log(json);
                 setInfo(json);
             });
         }

@@ -1,6 +1,6 @@
 import React from "react";
 
-import Section from './section.jsx';
+import Section from './section';
 
 import {Swiper, SwiperSlide} from "swiper/react";
 import "swiper/css";

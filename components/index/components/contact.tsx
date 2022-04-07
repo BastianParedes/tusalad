@@ -1,6 +1,6 @@
 import styles from '../styles/contact.module.css';
 
-import Section from './section.jsx';
+import Section from './section';
 
 import {BsFacebook, BsInstagram, BsLinkedin, BsWhatsapp} from 'react-icons/bs';
 import {FiMail} from 'react-icons/fi'

@@ -6,32 +6,56 @@ const WebpayPlus = transbank.WebpayPlus;
 const Environment = transbank.Environment;
 const Options = transbank.Options;
 
+// tanto el pago como el rechazo final usan get y mandan solo token_ws
+// Si se cancela antes en el botón, usa post y tiene TBK_TOKEN, TBK_ORDEN_COMPRA, TBK_ID_SESION
+// http://localhost:3000/api/endpayment?TBK_ORDEN_COMPRA=ORDER-19&TBK_ID_SESION=SESSION-19
 
 export default async function Db(request, response) {
-    if (request.method !== 'GET' && request.method !== 'POST') {
-        return;
-    }
-    const token_ws: string = request.method === 'GET' ? request.query.token_ws : request.body.TBK_TOKEN;
-
 
     const transaction = new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration));
-    const webpayPlusStatus = await transaction.commit(token_ws);    //ARREGLAR YA QUE NO SE PUEDE USAR SI EL USUARIO CANCELA ANTES DE PAGAR
+
+    if (request.method === 'GET') {//Transacción completa o cancelada al final o pasaron 10 minutos sin pagar.
+        let token: string|undefined = request.query.token_ws;
+        const TBK_ORDEN_COMPRA: string|undefined = request.query.TBK_ORDEN_COMPRA;
+        const TBK_ID_SESION: string|undefined = request.query.TBK_ID_SESION;
+
+        const promiseConnection = await mysql.createConnection({
+            host: process.env.sqlHost,
+            user: process.env.sqlUser,
+            password: process.env.sqlPassword,
+            database: process.env.sqlDB,
+        });
+
+        if (token === undefined) {
+            let response = await promiseConnection.query(`select token_ws from \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrderNumber\` = ${TBK_ORDEN_COMPRA}`);
+            let object = response[0][0];
+            token = object.token;
+        } else {
+            const webpayPlusStatus = await transaction.commit(token);
+            await promiseConnection.execute(`UPDATE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` SET \`status\` = '${webpayPlusStatus.status}' WHERE (\`token\` = '${token}');`);
+        }
+
+        await promiseConnection.end();
+
+        response.redirect(307, `/receipt?token=${token}`);
 
 
-    const promiseConnection = await mysql.createConnection({
-        host: process.env.sqlHost,
-        user: process.env.sqlUser,
-        password: process.env.sqlPassword,
-        database: process.env.sqlDB,
-    });
 
-    await promiseConnection.execute(`UPDATE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` SET \`status\` = '${webpayPlusStatus.status}' WHERE (\`token_ws\` = '${token_ws}');`);
-    await promiseConnection.end();
+    } else if (request.method === 'POST') {//Se devuelve a la página con el botón al inicio del pago.
+        const token: string = request.body.TBK_TOKEN;
+        const order: string = request.body.TBK_ORDEN_COMPRA;
+        const session: string = request.body.TBK_ID_SESION;
+
+        const webpayPlusStatus = await transaction.status(token);
+
+        response.redirect(307, `/receipt?token=${token}`);
+    }
 
 
-    response.redirect(307, `/receipt?token_ws=${token_ws}`);
+
 }
 
+    
 
 
 
@@ -69,6 +93,7 @@ export default async function Db(request, response) {
 
 
 // PASÓ DEMASIADO TIEMPO
+// http://localhost:3000/api/endpayment?TBK_ORDEN_COMPRA=ORDER-19&TBK_ID_SESION=SESSION-19
 // https://webpay3gint.transbank.cl/webpayserver/error.cgi?TBK_TOKEN=01ab1f1c36286108d6c29f5d47bb53ca556247065126c2439cc1397344c5e999
 // {
 //     vci: 'ABO',
