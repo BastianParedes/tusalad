@@ -1,11 +1,14 @@
 .aside {
     position: relative;
-    flex-grow: 1;
-    background-color: yellow;
+    flex-grow: 20;
     padding: 20px;
 }
 
 .form {
+    border-width: 2px;
+    border-left: solid 2px;
+    height: 100%;
+    padding: 0 5px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 10px;
