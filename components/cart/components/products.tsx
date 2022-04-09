@@ -15,7 +15,7 @@ function Product(props: ProductProps) {
     let [quantity, setQuantity]: any = React.useState(props.quantity);
 
     React.useEffect((): void => {
-        let cart = JSON.parse(sessionStorage.getItem('cart') || '{}');
+        let cart: any = JSON.parse(sessionStorage.getItem('cart') || '{}');
         cart[props.productKey] = quantity;
         sessionStorage.setItem('cart', JSON.stringify(cart));
     }, [quantity]);
@@ -26,11 +26,11 @@ function Product(props: ProductProps) {
             <img className={styles['product-image']} src="" alt="" />
             <div className={styles['product-info-container']}>
                 <span className={styles['product-name']}>{productInfo.name}</span>
-                <span className={styles['']}>Descripción</span>
+                <span className={styles['product-description']}>Descripción</span>
             </div>
-            <div className={styles['']}>
+            <div className={styles['input-container']}>
                 <button className={styles['button-add-one']} onClick={(): void => setQuantity((q: number): number => Math.max(0, q-1))}>-</button>
-                <input type="number" className={styles['']} value={quantity} onChange={(event: any): void => setQuantity(Math.max(0, parseInt(event.target.value)))} />
+                <input type="number" className={styles['input-quantity']} value={quantity} onChange={(event: any): void => setQuantity(Math.max(0, parseInt(event.target.value)))} />
                 <button className={styles['button-substract-one']} onClick={(): void => setQuantity((q: number): number => Math.max(0, q+1))}>+</button>
             </div>
         </div>
@@ -38,11 +38,13 @@ function Product(props: ProductProps) {
 }
 
 
+
+
 export default function Products() {
-    let [cart, setCart]: any[] = React.useState({});
+    let [cart, setCart]: any = React.useState({"0":4,"1":2,"2":1,"3":0});
 
     React.useEffect((): void => {
-        setCart(() => JSON.parse(sessionStorage.getItem('cart') || '{}'));
+        // setCart(():void => JSON.parse(sessionStorage.getItem('cart') || '{}'));
     }, [])
     
 

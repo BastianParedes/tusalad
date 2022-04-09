@@ -7,6 +7,7 @@ import Services from '../components/index/components/services';
 import Products from '../components/index/components/products';
 import Contact from '../components/index/components/contact'
 import Footer from '../components/index/components/footer';
+import CartButton from '../components/index/components/CartButton';
 import Modal from '../components/index/components/modal';
 
 
@@ -35,10 +36,13 @@ export default function Index() {
         <React.StrictMode>
             <Home />
             <Nav />
-            <About />
-            <Services />
-            <Products openModal={openModal} />
-            <Contact />
+            <div style={{position: 'relative'}}>
+                <About />
+                <Services />
+                <Products openModal={openModal} />
+                <Contact />
+                <CartButton />
+            </div>
             <Footer />
             {openedModal ? <Modal imageName={modalImageName} closeModal={closeModal}/> : <></>}
         </React.StrictMode>

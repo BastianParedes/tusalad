@@ -1,0 +1,27 @@
+
+.button-container {
+    width: fit-content;
+    position: sticky;
+    bottom: 0;
+    padding: 0 20px 20px 0;
+    margin-left: auto;
+}
+
+.button {
+    position: relative;
+    width: fit-content;
+    font-size: 5rem;
+    color: rgb(0, 0, 0);
+    display: flex;
+    background-color: rgb(255, 255, 0);
+    border-radius: 50%;
+    padding: .9rem;
+    left: auto;
+    transition: .5s all ease;
+    margin-left: auto;
+}
+
+.button:hover {
+    transform: scale(1.1) rotate(-15deg);
+}
+
