@@ -6,9 +6,10 @@ import About from '../components/index/components/about';
 import Services from '../components/index/components/services';
 import Products from '../components/index/components/products';
 import Contact from '../components/index/components/contact'
+import CartButton from '../components/index/components/cartButton';
 import Footer from '../components/index/components/footer';
-import CartButton from '../components/index/components/CartButton';
 import Modal from '../components/index/components/modal';
+
 
 
 

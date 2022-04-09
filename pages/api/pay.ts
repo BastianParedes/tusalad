@@ -1,11 +1,11 @@
 // 4051 8842 3993 7763
 const JSONProducts: any = require('/public/products.json');
-const mysql = require('mysql2/promise');
-const transbank = require('transbank-sdk');
+const mysql: any = require('mysql2/promise');
+const transbank: any = require('transbank-sdk');
 
-const WebpayPlus = transbank.WebpayPlus;
-const Environment = transbank.Environment;
-const Options = transbank.Options;
+const WebpayPlus: any = transbank.WebpayPlus;
+const Environment: any = transbank.Environment;
+const Options: any = transbank.Options;
 
 
 export default async function Pay(request: any, response: any) {
