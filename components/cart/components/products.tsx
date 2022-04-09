@@ -55,7 +55,7 @@ function Product(props: ProductProps) {
 
 
 export default function Products() {
-    let [cart, setCart]: any = React.useState({"0":4,"1":2,"2":1,"3":0});
+    let [cart, setCart]: any = React.useState({});
     // {"0":4,"1":2,"2":1,"3":0}
     React.useEffect((): void => {
         setCart(():void => JSON.parse(sessionStorage.getItem('cart') || '{}'));

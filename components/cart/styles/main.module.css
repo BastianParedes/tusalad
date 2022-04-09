@@ -2,3 +2,16 @@
     position: relative;
     flex-grow: 1;
 }
+
+.return-button {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    font-size: 2rem;
+    margin: 1rem;
+    padding: .5rem;
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border-radius: 10px;
+}

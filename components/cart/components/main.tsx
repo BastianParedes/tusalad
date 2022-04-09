@@ -6,7 +6,7 @@ import Products from './products';
 export default function Main(props: any) {
     return (
         <main className={styles['main']}>
-            <a className={styles['']} href='/'><BsArrowReturnLeft /> Volver a la página principal</a>
+            <a className={styles['return-button']} href='/'><BsArrowReturnLeft /> Volver</a>
             <Products />
         </main>
     );
