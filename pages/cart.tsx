@@ -10,7 +10,7 @@ import Footer from '../components/cart/components/footer';
 
 
 
-export default function App() {
+export default function Cart() {
 
     return (
         <React.StrictMode>
@@ -21,7 +21,6 @@ export default function App() {
                 </div>
                 <Footer />
             </div>
-            
         </React.StrictMode>
     );
 }

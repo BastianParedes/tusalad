@@ -3,7 +3,10 @@ const JSONProducts: any = require('/public/products.json');
 import React from 'react';
 import { useRouter } from 'next/router';
 
-export default function getStaticProps() {
+
+
+
+export default function Receipt() {
     const router: any = useRouter();
     const token: string|undefined = router.query.token;
     let [info, setInfo] = React.useState({});
