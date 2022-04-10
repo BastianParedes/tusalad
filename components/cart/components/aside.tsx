@@ -1,9 +1,12 @@
 import styles from '../styles/aside.module.css';
 import React from 'react';
+import { Context } from '../application/provider';
+const JSONProducts: any = require('/public/products.json');
+
 
 
 export default function Aside() {
-
+    let context: any = React.useContext(Context);
     let [url, setUrl] = React.useState('');
     let [token, setToken] = React.useState('');
 
@@ -94,10 +97,15 @@ export default function Aside() {
                 </select>
                 <h2>Dirección:</h2>
                 <input className={styles['input-address']} type='text' name='address' placeholder='Dirección' defaultValue='Crónica #2202' />
+                <h2>Monto total:</h2>
+                <h2 className={styles['amount']}>{'$ '+ Object.keys(context.cart).reduce((amount, key) => {
+                    let quantity = context.cart[key];
+                    let price = JSONProducts[key].price;
+                    return amount + quantity * price;
+                }, 0)}</h2>
                 <input className={styles['input-submit']} type='submit' value='Pagar' />
                 <input type='hidden' name='token_ws' defaultValue={token} />
             </form>
         </aside>
     );
 }
-
