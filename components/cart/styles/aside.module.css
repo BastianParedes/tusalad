@@ -25,3 +25,10 @@
     height: 50px;
     margin: auto;
 }
+
+
+@media (max-device-width: 700px) {
+    .form {
+        border: none;
+    }
+}

@@ -11,3 +11,9 @@
     flex-grow: 1;
     display: flex;
 }
+
+@media (max-device-width: 700px) {
+    .cart__div {
+        flex-direction: column;
+    }
+}
