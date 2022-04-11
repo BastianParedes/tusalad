@@ -1,8 +1,11 @@
 
-const JSONProducts: any = require('/public/products.json');
+import React from 'react';
+import { Context } from '../../application/provider';
 import { BsCartPlus } from 'react-icons/bs'
 import Section from './section';
 import styles from '../styles/products.module.css';
+
+const JSONProducts: any = require('/public/products.json');
 
 type ProductProps = {
     id: string,
@@ -15,22 +18,21 @@ type ProductProps = {
 }
 
 
-
 type ProducstProps = {
     openModal: any//funcion
 }
 
+
 function Product(props: ProductProps) {
+    let context: any = React.useContext(Context);
+    const min: number = context.min;
+    const max: number = context.max;
+
 
     let addToCart = () => {
-        let cart = JSON.parse(sessionStorage.getItem('cart') || '{}');
-
-        if (cart[props.id] === undefined) {// agrega el id al carrito si no existe
-            cart[props.id] = 0;
-        }
-
-        cart[props.id]++;
-        sessionStorage.setItem('cart', JSON.stringify(cart));
+        let cart = {...context.cart};
+        cart[props.id] = Math.min(max, (cart[props.id] || 0) + 1);
+        context.setCart(cart);
         props.openModal(props.src)
     }
 
@@ -52,6 +54,7 @@ function Product(props: ProductProps) {
         </div>
     );
 }
+
 
 
 export default function Products(props: ProducstProps) {

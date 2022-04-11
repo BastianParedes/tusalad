@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Context } from '../application/provider';
+import { Context } from '../../application/provider';
 import styles from '../styles/products.module.css';
 
 const JSONProducts: any = require('/public/products.json');
@@ -10,12 +10,12 @@ const JSONProducts: any = require('/public/products.json');
 
 function Product({ productKey }: any) {
     let context: any = React.useContext(Context);
-    const min: number = 0;
-    const max: number = 20;
+    const min: number = context.min;
+    const max: number = context.max;
 
     const setCart = (quantity: number): void => {
         let cart = {...context.cart};
-        cart[productKey]  = quantity;
+        cart[productKey] = quantity;
         context.setCart(cart);
     }
 

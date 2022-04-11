@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "components/cart/application/provider.tsx"  ],
+, "components/application/provider.jsx"  ],
   "exclude": [
     "node_modules"
   ]

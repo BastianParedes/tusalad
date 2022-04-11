@@ -34,7 +34,7 @@ export default function Index() {
 
 
     return (
-        <React.StrictMode>
+        <>
             <Home />
             <Nav />
             <div style={{position: 'relative'}}>
@@ -46,7 +46,7 @@ export default function Index() {
             </div>
             <Footer />
             {openedModal ? <Modal imageName={modalImageName} closeModal={closeModal}/> : <></>}
-        </React.StrictMode>
+        </>
     );
 }
 

@@ -1,6 +1,6 @@
 import styles from '../styles/aside.module.css';
 import React from 'react';
-import { Context } from '../application/provider';
+import { Context } from '../../application/provider';
 const JSONProducts: any = require('/public/products.json');
 
 
@@ -17,8 +17,8 @@ export default function Aside() {
         const name: string = event.target.name.value;
         const e_mail: string = event.target.e_mail.value;
         const city: string = event.target.city.value;
-        const address: string = event.target.rut.value;
-        const cart: any = JSON.parse(sessionStorage.getItem('cart') || '{}');
+        const address: string = event.target.address.value;
+        const cart: any = context.cart;
 
         if (rut === '') {
             alert('No has ingresado tu rut');
