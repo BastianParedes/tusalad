@@ -1,9 +1,9 @@
 
 .swiper {
-    --padding-horizontal: 100px;
+    --padding-horizontal: 50px;
     position: relative;
-    width: calc(60% - 2 * var(--padding-horizontal));
-    height: 500px;
+    width: calc(min(500px, 100%) - 2 * var(--padding-horizontal));
+    height: calc(500px - 2 * var(--padding-horizontal));
     padding: 50px var(--padding-horizontal);
 }
 
@@ -20,3 +20,14 @@
     object-fit: cover;
 }
 
+
+
+@media (max-device-width: 800px) {
+    .button-icon {
+        display: inline;
+    }
+
+    .button-name {
+        display: none;
+    }
+}

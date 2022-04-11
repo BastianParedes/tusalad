@@ -16,7 +16,6 @@
     width: 100%;
     position: absolute;
     background-color: var(--background-color);
-    z-index: -1;
 }
 
 .tittle-content {
