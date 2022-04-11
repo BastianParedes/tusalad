@@ -1,6 +1,6 @@
 .section {
     position: relative;
-    margin: 0 20% 0 20%;
+    margin: 0 20%;
     padding-top: 6rem;
 }
 
@@ -23,4 +23,13 @@
     background-color: var(--background-color);
     padding: 0 10px;
     font-size: 20px;
+}
+
+
+
+@media (max-device-width: 800px) {
+    .section {
+        margin: 0 5%;
+    }
+
 }
