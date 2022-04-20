@@ -1,6 +1,6 @@
-import styles from '../styles/aside.module.css';
+import styles from './styles.module.css';
 import React from 'react';
-import { Context } from '../../application/provider';
+import { Context } from '../application/provider';
 const JSONProducts: any = require('/public/products.json');
 
 

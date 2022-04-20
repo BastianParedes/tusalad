@@ -1,7 +1,7 @@
 import React from 'react';
 import { GrClose, GrStatusGood } from 'react-icons/gr';
 
-import styles from '../styles/modal.module.css';
+import styles from './styles.module.css';
 
 type ModalProps = {
     imageName: string ,

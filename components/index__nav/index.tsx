@@ -1,5 +1,4 @@
-import styles from '../styles/nav.module.css';
-
+import styles from './styles.module.css';
 
 import { AiFillHome } from 'react-icons/ai';
 import { BsFillPeopleFill } from 'react-icons/bs';

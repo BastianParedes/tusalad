@@ -1,4 +1,4 @@
-import styles from '../styles/section.module.css';
+import styles from './styles.module.css';
 
 type SectionProps = {
     id: string,

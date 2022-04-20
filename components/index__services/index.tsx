@@ -1,6 +1,6 @@
 import React from "react";
 
-import Section from './section';
+import Section from '../index__section';
 
 import {Swiper, SwiperSlide} from "swiper/react";
 import "swiper/css";
@@ -9,7 +9,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import {Autoplay, EffectCards, EffectCube, Keyboard, Navigation, Pagination} from "swiper";
 
-import styles from '../styles/services.module.css';
+import styles from './styles.module.css';
 
 export default function Services() {
     return (

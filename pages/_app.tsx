@@ -1,6 +1,6 @@
 
 import 'normalize.css';
-import '/public/styles.css';
+import '/public/styles/styles.css';
 
 import React from 'react';
 import Head from 'next/head';

@@ -1,7 +1,7 @@
-import styles from '../styles/cartButton.module.css';
+import styles from './styles.module.css';
 import { BsCart4 } from 'react-icons/bs';
 
-export default function Button() {
+export default function CartButton() {
     return (
         <div className={styles['button-container']}>
             <a className={styles['button']} href='/cart'>
