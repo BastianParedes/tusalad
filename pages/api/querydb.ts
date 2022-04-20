@@ -1,5 +1,5 @@
 
-const mysql = require('mysql2/promise');
+const mongodb: any = require('mongodb');
 const transbank = require('transbank-sdk');
 
 const WebpayPlus = transbank.WebpayPlus;
@@ -8,24 +8,17 @@ const Options = transbank.Options;
 
 
 export default async function Db(request: any, response: any) {
-    const token: string = request.body.token;
+    const buyOrder: string = request.body.buyOrder;
 
-    const promiseConnection = await mysql.createConnection({
-        host: process.env.sqlHost,
-        user: process.env.sqlUser,
-        password: process.env.sqlPassword,
-        database: process.env.sqlDB,
-    });
-
-    const queryResponse = await promiseConnection.query(`SELECT * FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE (\`token\` = '${token}');`);
-    const DBData = queryResponse[0][0];
-
-    const transaction = new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration));
-    const webpayPlusStatus = await transaction.status(token);
+    const client: any = new mongodb.MongoClient(process.env.mongodbURI);
+    await client.connect();
+    const db: any = client.db(process.env.mongodbDB);
+    const collection: any = db.collection(process.env.mongodbCollection);
 
 
-    promiseConnection.end();
-    response.json({...DBData, ...webpayPlusStatus});
+    const data = await collection.findOne({ _id: new mongodb.ObjectId(buyOrder) });
+    await client.close();
+    response.json(data);
 }
 
 

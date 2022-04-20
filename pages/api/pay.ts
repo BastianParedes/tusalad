@@ -1,11 +1,8 @@
+
 // 4051 8842 3993 7763
 const JSONProducts: any = require('/public/products.json');
-const mysql: any = require('mysql2/promise');
+const mongodb: any = require('mongodb');
 const transbank: any = require('transbank-sdk');
-
-const WebpayPlus: any = transbank.WebpayPlus;
-const Environment: any = transbank.Environment;
-const Options: any = transbank.Options;
 
 
 export default async function Pay(request: any, response: any) {
@@ -36,64 +33,48 @@ export default async function Pay(request: any, response: any) {
         return;
     }
 
+    
+    const client: any = new mongodb.MongoClient(process.env.mongodbURI);
+    await client.connect();
+    const db: any = client.db(process.env.mongodbDB);
+    const collection: any = db.collection(process.env.mongodbCollection);
 
-    const promiseConnection = await mysql.createConnection({
-        host: process.env.sqlHost,
-        user: process.env.sqlUser,
-        password: process.env.sqlPassword,
-        database: process.env.sqlDB,
-    });
+    
+    const DBVaules: any = {
+        token: '',
+        status: {},
+        delivered: false,
+        rut: request.body.rut,
+        name: request.body.name,
+        e_mail: request.body.e_mail,
+        products: DBcart,
+        city: request.body.city,
+        address: request.body.address,
+        date: new Date()
+    };
+
+    const insertResult: {acknowledged: boolean, insertedId: any} = await collection.insertOne(DBVaules);
+    const buyOrder: string = insertResult.insertedId.toHexString();
 
 
-
-    var queryResponse = await promiseConnection.query(`SELECT \`buyOrderNumber\` FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrderNumber\`=(SELECT max(\`buyOrderNumber\`) FROM \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\`)`);
-    let buyOrderNumber: number = 0;
-    if (queryResponse[0].length !== 0) {
-        buyOrderNumber = queryResponse[0][0].buyOrderNumber + 1;
-    }
-
-    const transaction = await new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration)).create(
-        buyOrderNumber.toString(), //orden de compra
-        buyOrderNumber.toString(), //session id
+    const transaction = await new transbank.WebpayPlus.Transaction(new transbank.Options(process.env.commerceCode, process.env.apiKey, transbank.Environment.Integration));
+    const creation = await transaction.create(
+        buyOrder, //orden de compra
+        buyOrder, //session id
         amount,
         request.headers.origin + '/api/endpayment'  //return URL    //GENERARÁ ERROR?
     );
 
+    const status = await transaction.status(creation.token);
+    await collection.updateOne({ _id: new mongodb.ObjectId(buyOrder) }, { $set: { status, token: creation.token } });
 
-    const date = new Date();
-    const DBVaules: any = {
-        buyOrderNumber,
-        token: transaction.token,
-        status: 'INITIALIZED',
-        amount,
-        rut: request.body.rut,
-        name: request.body.name,
-        e_mail: request.body.e_mail,
-        products: JSON.stringify(DBcart),
-        city: request.body.city,
-        address: request.body.address,
-        date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}-${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
-    };
-
-
-
-    var queryResponse = await promiseConnection.query(`DESCRIBE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\``);
-    let fields:string[] = queryResponse[0].map((column: any) => column.Field);
-    let sqlFields: string = '(`' + fields.join('`,`') + '`)';
-
-    let sqlValues: string = '('
-
-    for (let field of fields) {
-        sqlValues += `\'${DBVaules[field].toString().replaceAll('\\','\\\\').replaceAll('\'','\\\'')}\',`;
-    }
-    sqlValues = sqlValues.slice(0, -1) + ')';
-
-    await promiseConnection.execute(`INSERT INTO \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` ${sqlFields} VALUES ${sqlValues};`);
-    await promiseConnection.end();
-
+    await client.close();
     response.json({
         status: 200,
-        token: transaction.token,
-        url: transaction.url
+        token: creation.token,
+        url: creation.url
     });
+
 };
+
+

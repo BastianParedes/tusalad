@@ -8,15 +8,15 @@ import { useRouter } from 'next/router';
 
 export default function Receipt() {
     const router: any = useRouter();
-    const token: string|undefined = router.query.token;
+    const buyOrder: string|undefined = router.query.buyOrder;
     let [info, setInfo] = React.useState({});
     
     React.useEffect((): void => {
-        if (token !== undefined) {
+        if (buyOrder !== undefined) {
             fetch('/api/querydb', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({token})
+                body: JSON.stringify({buyOrder})
             }).then(response => response.json()
             ).then(json => {
                 setInfo(json);

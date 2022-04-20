@@ -1,61 +1,84 @@
 
-const mysql = require('mysql2/promise');
-const transbank = require('transbank-sdk');
+const mongodb: any = require('mongodb');
+const transbank: any = require('transbank-sdk');
 
-const WebpayPlus = transbank.WebpayPlus;
-const Environment = transbank.Environment;
-const Options = transbank.Options;
+const WebpayPlus: any = transbank.WebpayPlus;
+const Environment: any = transbank.Environment;
+const Options: any = transbank.Options;
 
 // tanto el pago como el rechazo final usan get y mandan solo token_ws
 // Si se cancela antes en el botón, usa post y tiene TBK_TOKEN, TBK_ORDEN_COMPRA, TBK_ID_SESION
 // http://localhost:3000/api/endpayment?TBK_ORDEN_COMPRA=ORDER-19&TBK_ID_SESION=SESSION-19
 
 export default async function Db(request: any, response: any) {
+    if (request.method !== 'GET' && request.method !== 'POST') return;
 
     const transaction = new WebpayPlus.Transaction(new Options(process.env.commerceCode, process.env.apiKey, Environment.Integration));
+    let buyOrder: string|undefined;
 
     if (request.method === 'GET') {//Transacción completa o cancelada al final o pasaron 10 minutos sin pagar.
         let token: string|undefined = request.query.token_ws;
         const TBK_ORDEN_COMPRA: string|undefined = request.query.TBK_ORDEN_COMPRA;
         const TBK_ID_SESION: string|undefined = request.query.TBK_ID_SESION;
 
-        const promiseConnection = await mysql.createConnection({
-            host: process.env.sqlHost,
-            user: process.env.sqlUser,
-            password: process.env.sqlPassword,
-            database: process.env.sqlDB,
-        });
+        const client: any = new mongodb.MongoClient(process.env.mongodbURI);
+        await client.connect();
+        const db: any = client.db(process.env.mongodbDB);
+        const collection: any = db.collection(process.env.mongodbCollection);
 
         if (token === undefined) {
-            let response = await promiseConnection.query(`select token_ws from \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` WHERE \`buyOrderNumber\` = ${TBK_ORDEN_COMPRA}`);
-            let object = response[0][0];
-            token = object.token;
-        } else {
-            const webpayPlusStatus = await transaction.commit(token);
-            await promiseConnection.execute(`UPDATE \`${process.env.sqlDB}\`.\`${process.env.sqlTable}\` SET \`status\` = '${webpayPlusStatus.status}' WHERE (\`token\` = '${token}');`);
+            buyOrder = TBK_ORDEN_COMPRA;
+
+            const findResult = await collection.findOne({ _id: new mongodb.ObjectId(buyOrder) });
+            const token = findResult.token;//error
+            const status = await transaction.commit(token);
+            await collection.updateOne({ _id: new mongodb.ObjectId(buyOrder) }, { $set: { status } });
+
+        } else if (token !== undefined) { // COMPRA COMPLETA O CANCELADA AL FINAL
+            const status = await transaction.commit(token);
+            await collection.updateOne({ token }, { $set: { status } });
+            const findResult = await collection.findOne({ token });
+            buyOrder = findResult._id.toHexString();
         }
 
-        await promiseConnection.end();
+        await client.close();
 
-        response.redirect(307, `/receipt?token=${token}`);
 
 
 
     } else if (request.method === 'POST') {//Se devuelve a la página con el botón al inicio del pago.
         const token: string = request.body.TBK_TOKEN;
-        const order: string = request.body.TBK_ORDEN_COMPRA;
+        buyOrder = request.body.TBK_ORDEN_COMPRA;
         const session: string = request.body.TBK_ID_SESION;
-
-        const webpayPlusStatus = await transaction.status(token);
-
-        response.redirect(307, `/receipt?token=${token}`);
     }
 
+    response.redirect(307, `/receipt?buyOrder=${buyOrder}`);
 
 
 }
 
-    
+// TODO CORRECTO
+// GET
+// token_ws
+// se puede commit
+
+// CANCELADO A ÚLTIMO MOMENTO
+// GET
+// token_ws
+// se puede commit
+
+// CANCELADO POR TIEMPO
+// GET
+// TBK_ORDEN_COMPRA
+// TBK_ID_SESION
+
+// CANCELADO INMEDIATO
+// POST
+// TBK_TOKEN
+// TBK_ORDEN_COMPRA
+// TBK_ID_SESION
+// NO SE PUEDE COMMIT
+
 
 
 
@@ -128,9 +151,15 @@ export default async function Db(request: any, response: any) {
 //   }
 
 
-// CLIENTE ANULA LA COMPRA ANTES DE PAGAR
-// [Object: null prototype] {
-//     TBK_TOKEN: '01ab0162729c673a3254c238b960295405a7641b8eab12f626dddf9729edf229',
-//     TBK_ORDEN_COMPRA: 'TU-SALAD-15',
-//     TBK_ID_SESION: 'S-15'
-// }
+
+
+
+
+// TypeError: Cannot read properties of null (reading 'token')
+//   33 | 
+//   34 |             const findResult = await collection.findOne({ _id: new mongodb.ObjectId(buyOrder) });
+// > 35 |             const token = findResult.token;
+//      |                                     ^
+//   36 |             const status = await transaction.commit(token);
+//   37 |             await collection.updateOne({ _id: new mongodb.ObjectId(buyOrder) }, { $set: { status } });
+//   38 | 
