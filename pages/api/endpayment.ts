@@ -1,11 +1,42 @@
-
+// 4051 8842 3993 7763
 const mongodb: any = require('mongodb');
 const transbank: any = require('transbank-sdk');
+const nodemailer = require('nodemailer');
+
+
+async function sendMail(to: string, subject: string, text: string) {
+    let transporter = await nodemailer.createTransport({
+        host: 'smtp-mail.outlook.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.mail,
+            pass: process.env.password,
+        },
+    });
+
+    await transporter.sendMail({
+        from: process.env.mail,
+        to,
+        subject,
+        text
+    });
+}
+
+
+
+
+
+
+
 
 
 
 export default async function Db(request: any, response: any) {
     if (request.method !== 'GET' && request.method !== 'POST') {return};
+
+
+    
 
     const transaction = new transbank.WebpayPlus.Transaction(new transbank.Options(process.env.commerceCode, process.env.apiKey, transbank.Environment.Integration));
     let buyOrder: string|undefined;
@@ -17,30 +48,37 @@ export default async function Db(request: any, response: any) {
         if (request.query.token_ws !== undefined) { //pago completo o interrumpido al final
             const client: any = new mongodb.MongoClient(process.env.mongodbURI);
 
-            try {
-                await client.connect();
+            await new Promise((resolve, reject)=>resolve(null))
+            .then(async () => await client.connect())
+            .then(() => {
                 const db: any = client.db(process.env.mongodbDB);
-                const collection: any = db.collection(process.env.mongodbCollection);
-                const token: string = request.query.token_ws;
-                const status: any = await transaction.commit(token);
-                buyOrder = status.buy_order; // lo cambia si antes era undefined
+                return db.collection(process.env.mongodbCollection);
+            })
+            .then(async (collection) => {
+                const status = await transaction.commit(request.query.token_ws);
+                return {collection, status};
+            })
+            .then( async ({collection, status}) => {
+                buyOrder = status.buy_order;
                 await collection.updateOne({ _id: new mongodb.ObjectId(buyOrder) }, { $set: { status } });
-                
-            }
-            catch (error) {
-                console.log(error);
-            } finally {
+                return buyOrder;
+            }).then(async (buyOrder) => {
+                await sendMail('bastian.p.trabajo@outlook.com', 'Compra en Tu Salad ' + buyOrder, `Alguien realizó una compra. Para ver los detalles entra a \n\nwww.${request.rawHeaders[1]}/receipt/?buyOrder=${buyOrder}`);
+            })
+            .catch(async (error) => {
+                await sendMail('bastian.p.trabajo@outlook.com', 'Error en el registro de compra', `Hubo un error al momento de registrar la compra de código ${buyOrder}\nEl error es\n\n${error}`)
+            })
+            .finally(async () => {
                 await client.close();
-            }
+                response.redirect(307, `/receipt?buyOrder=${buyOrder}`);
+            });
         }
 
 
     } else if (request.method === 'POST') {//Se devuelve a la página con el botón al inicio del pago.
         buyOrder = request.body.TBK_ORDEN_COMPRA;
+        response.redirect(307, `/receipt?buyOrder=${buyOrder}`);
     }
-
-    response.redirect(307, `/receipt?buyOrder=${buyOrder}`);
-
 
 }
 

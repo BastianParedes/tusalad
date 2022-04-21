@@ -67,6 +67,9 @@ export default async function Pay(request: any, response: any) {
         const status = await transaction.status(creation.token);
         await collection.updateOne({ _id: new mongodb.ObjectId(buyOrder) }, { $set: { status, token: creation.token } });
 
+        
+
+
         response.json({
             status: 200,
             token: creation.token,

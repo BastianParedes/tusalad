@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "components/application/provider.jsx"  ],
+, "components/application/provider.jsx", "pages/api/mail.ts", "enviar.js"  ],
   "exclude": [
     "node_modules"
   ]

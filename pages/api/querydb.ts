@@ -20,7 +20,6 @@ export default async function Db(request: any, response: any) {
         response.json(data);
     }
     catch (error) {
-        console.log(error);
         response.json({});
     }
     finally {
