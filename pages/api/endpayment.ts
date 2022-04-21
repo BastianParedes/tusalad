@@ -5,7 +5,7 @@ const transbank: any = require('transbank-sdk');
 
 
 export default async function Db(request: any, response: any) {
-    if (request.method !== 'GET' && request.method !== 'POST') return;
+    if (request.method !== 'GET' && request.method !== 'POST') {return};
 
     const transaction = new transbank.WebpayPlus.Transaction(new transbank.Options(process.env.commerceCode, process.env.apiKey, transbank.Environment.Integration));
     let buyOrder: string|undefined;
