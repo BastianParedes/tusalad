@@ -85,7 +85,7 @@ export default function Aside() {
         <aside className={styles['aside']}>
             <form className={styles['form']} action={url} method='GET' onSubmit={pay}>
                 <h2>Rut:</h2>
-                <input className={styles['input-rut']} type='text' name='rut' placeholder='rut' onChange={fixRut} defaultValue='19.111.648 - 8' />
+                <input className={styles['input-rut']} type='text' name='rut' placeholder='rut' onChange={fixRut} defaultValue='19.111.648-8' />
                 <h2>Nombre:</h2>
                 <input className={styles['input-name']} type='text' name='name' placeholder='Nombre' defaultValue='Bastián' />
                 <h2>E-mail:</h2>

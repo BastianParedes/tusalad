@@ -6,7 +6,6 @@ const transbank: any = require('transbank-sdk');
 
 
 export default async function Pay(request: any, response: any) {
-    console.log('OCULTO');
     if (typeof request.body.cart !== 'object') {//termina la ejecución si el body no es un objeto
         response.json({status: 400});
         return;
