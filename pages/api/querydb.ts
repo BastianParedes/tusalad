@@ -9,16 +9,23 @@ const Options = transbank.Options;
 
 export default async function Db(request: any, response: any) {
     const buyOrder: string = request.body.buyOrder;
-
+    let data = {}
     const client: any = new mongodb.MongoClient(process.env.mongodbURI);
-    await client.connect();
-    const db: any = client.db(process.env.mongodbDB);
-    const collection: any = db.collection(process.env.mongodbCollection);
 
-
-    const data = await collection.findOne({ _id: new mongodb.ObjectId(buyOrder) });
-    await client.close();
-    response.json(data);
+    try {
+        await client.connect();
+        const db: any = client.db(process.env.mongodbDB);
+        const collection: any = db.collection(process.env.mongodbCollection);
+        data = await collection.findOne({ _id: new mongodb.ObjectId(buyOrder) });
+    }
+    catch (error) {
+        console.log(error);
+    }
+    finally {
+        await client.close();
+        response.json(data);
+    }
+    
 }
 
 

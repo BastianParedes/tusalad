@@ -15,14 +15,12 @@ export default async function Db(request: any, response: any) {
         buyOrder = request.query.TBK_ORDEN_COMPRA; // pasan 10 minutos sin pagar
 
         if (request.query.token_ws !== undefined) { //pago completo o interrumpido al final
-
-            // connect db
             const client: any = new mongodb.MongoClient(process.env.mongodbURI);
-            await client.connect();
-            const db: any = client.db(process.env.mongodbDB);
-            const collection: any = db.collection(process.env.mongodbCollection);
 
             try {
+                await client.connect();
+                const db: any = client.db(process.env.mongodbDB);
+                const collection: any = db.collection(process.env.mongodbCollection);
                 const token: string = request.query.token_ws;
                 const status: any = await transaction.commit(token);
                 buyOrder = status.buy_order; // lo cambia si antes era undefined

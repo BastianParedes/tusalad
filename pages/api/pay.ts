@@ -32,48 +32,57 @@ export default async function Pay(request: any, response: any) {
         return;
     }
 
-    
     const client: any = new mongodb.MongoClient(process.env.mongodbURI);
-    await client.connect();
-    const db: any = client.db(process.env.mongodbDB);
-    const collection: any = db.collection(process.env.mongodbCollection);
+    try {
+        await client.connect();
+        const db: any = client.db(process.env.mongodbDB);
+        const collection: any = db.collection(process.env.mongodbCollection);
 
-    
-    const DBVaules: any = {
-        token: '',
-        status: {},
-        delivered: false,
-        rut: request.body.rut,
-        name: request.body.name,
-        e_mail: request.body.e_mail,
-        products: DBcart,
-        city: request.body.city,
-        address: request.body.address,
-        date: new Date()
-    };
+        
+        const DBVaules: any = {
+            token: '',
+            status: {},
+            delivered: false,
+            rut: request.body.rut,
+            name: request.body.name,
+            e_mail: request.body.e_mail,
+            products: DBcart,
+            city: request.body.city,
+            address: request.body.address,
+            date: new Date()
+        };
 
-    const insertResult: {acknowledged: boolean, insertedId: any} = await collection.insertOne(DBVaules);
-    const buyOrder: string = insertResult.insertedId.toHexString();
+        const insertResult: {acknowledged: boolean, insertedId: any} = await collection.insertOne(DBVaules);
+        const buyOrder: string = insertResult.insertedId.toHexString();
 
 
-    const transaction = await new transbank.WebpayPlus.Transaction(new transbank.Options(process.env.commerceCode, process.env.apiKey, transbank.Environment.Integration));
-    const creation = await transaction.create(
-        buyOrder, //orden de compra
-        buyOrder, //session id
-        amount,
-        request.headers.origin + '/api/endpayment'  //return URL    //GENERARÁ ERROR?
-    );
+        const transaction = await new transbank.WebpayPlus.Transaction(new transbank.Options(process.env.commerceCode, process.env.apiKey, transbank.Environment.Integration));
+        const creation = await transaction.create(
+            buyOrder, //orden de compra
+            buyOrder, //session id
+            amount,
+            request.headers.origin + '/api/endpayment'  //return URL    //GENERARÁ ERROR?
+        );
 
-    const status = await transaction.status(creation.token);
-    await collection.updateOne({ _id: new mongodb.ObjectId(buyOrder) }, { $set: { status, token: creation.token } });
+        const status = await transaction.status(creation.token);
+        await collection.updateOne({ _id: new mongodb.ObjectId(buyOrder) }, { $set: { status, token: creation.token } });
 
-    await client.close();
-    response.json({
-        status: 200,
-        token: creation.token,
-        url: creation.url
-    });
+        response.json({
+            status: 200,
+            token: creation.token,
+            url: creation.url
+        });
 
+
+
+    }
+    catch (error) {
+        console.log(error);
+        response.json({status: 400});
+    }
+    finally {
+        await client.close();
+    }
 };
 
 
