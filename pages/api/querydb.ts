@@ -17,13 +17,14 @@ export default async function Db(request: any, response: any) {
         const db: any = client.db(process.env.mongodbDB);
         const collection: any = db.collection(process.env.mongodbCollection);
         data = await collection.findOne({ _id: new mongodb.ObjectId(buyOrder) });
+        response.json(data);
     }
     catch (error) {
         console.log(error);
+        response.json({});
     }
     finally {
         await client.close();
-        response.json(data);
     }
     
 }
