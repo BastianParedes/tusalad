@@ -1,14 +1,14 @@
 
 import React from 'react';
-import Home from '../components/index__home';
-import Nav from '../components/index__nav';
-import About from '../components/index__about';
-import Services from '../components/index__services';
-import Products from '../components/index__products';
-import Contact from '../components/index__contact'
-import CartButton from '../components/index__cartButton';
-import Footer from '../components/index__footer';
-import Modal from '../components/index__modal';
+import Home from '../components/index/home';
+import Nav from '../components/index/nav';
+import About from '../components/index/about';
+import Services from '../components/index/services';
+import Products from '../components/index/products';
+import Contact from '../components/index/contact'
+import CartButton from '../components/index/cartButton';
+import Footer from '../components/index/footer';
+import Modal from '../components/index/modal';
 
 
 

@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Context } from '../application/provider';
+import { Context } from '../../application/provider';
 import { BsCartPlus } from 'react-icons/bs'
-import Section from '../index__section';
+import Section from '../section';
 import styles from './styles.module.css';
 
 const JSONProducts: any = require('/public/products.json');

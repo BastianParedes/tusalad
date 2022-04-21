@@ -1,7 +1,7 @@
 
 import { BsArrowReturnLeft } from 'react-icons/bs';
 import styles from './styles.module.css';
-import Products from '../cart__products';
+import Products from '../products';
 
 export default function Main() {
     return (

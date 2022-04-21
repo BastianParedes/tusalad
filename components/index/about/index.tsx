@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import Section from '../index__section';
+import Section from '../section';
 
 export default function About() {
     return (

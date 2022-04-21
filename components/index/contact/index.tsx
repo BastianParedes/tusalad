@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import Section from '../index__section';
+import Section from '../section';
 
 import {BsFacebook, BsInstagram, BsLinkedin, BsWhatsapp} from 'react-icons/bs';
 import {FiMail} from 'react-icons/fi'
