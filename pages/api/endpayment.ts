@@ -4,7 +4,7 @@ const transbank: any = require('transbank-sdk');
 const nodemailer = require('nodemailer');
 
 
-async function sendMail(to: string, subject: string, text: string) {
+async function sendMail(subject: string, text: string) {
     let transporter = await nodemailer.createTransport({
         host: 'smtp-mail.outlook.com',
         port: 587,
@@ -17,7 +17,7 @@ async function sendMail(to: string, subject: string, text: string) {
 
     await transporter.sendMail({
         from: process.env.mail,
-        to,
+        to: process.env.mail,
         subject,
         text
     });
@@ -61,12 +61,14 @@ export default async function Db(request: any, response: any) {
             .then( async ({collection, status}) => {
                 buyOrder = status.buy_order;
                 await collection.updateOne({ _id: new mongodb.ObjectId(buyOrder) }, { $set: { status } });
-                return buyOrder;
-            }).then(async (buyOrder) => {
-                await sendMail('bastian.p.trabajo@outlook.com', 'Compra en Tu Salad ' + buyOrder, `Alguien realizó una compra. Para ver los detalles entra a \n\nwww.${request.rawHeaders[1]}/receipt/?buyOrder=${buyOrder}`);
+                return status;
+            }).then(async (status) => {
+                if (status.status === 'AUTHORIZED') {
+                    await sendMail('Compra en Tu Salad ' + status.buy_order, `Alguien realizó una compra. Para ver los detalles entra a \n\nwww.${request.rawHeaders[1]}/receipt/?buyOrder=${status.buy_order}`);
+                }
             })
             .catch(async (error) => {
-                await sendMail('bastian.p.trabajo@outlook.com', 'Error en el registro de compra', `Hubo un error al momento de registrar la compra de código ${buyOrder}\nEl error es\n\n${error}`)
+                await sendMail('Error en el registro de compra', `Hubo un error al momento de registrar la compra de código ${buyOrder}\nEl error es\n\n${error}`)
             })
             .finally(async () => {
                 await client.close();
@@ -77,7 +79,7 @@ export default async function Db(request: any, response: any) {
 
     } else if (request.method === 'POST') {//Se devuelve a la página con el botón al inicio del pago.
         buyOrder = request.body.TBK_ORDEN_COMPRA;
-        response.redirect(307, `/receipt?buyOrder=${buyOrder}`);
+        response.redirect(307, `/receipt/?buyOrder=${buyOrder}`);
     }
 
 }
