@@ -5,6 +5,7 @@ import jsPDF from 'jspdf';
 import React from 'react';
 import { useRouter } from 'next/router';
 import { MdMargin } from 'react-icons/md';
+import { disconnect } from 'process';
 
 
 
@@ -15,16 +16,15 @@ export default function Receipt() {
     let [data, setData] = React.useState({});
     let [URLpdf, setURLpdf] = React.useState('');
 
-    React.useEffect(() => {
+    React.useEffect(async () => {
         if (buyOrder !== undefined) {
-            fetch('/api/querydb', {
+            let response = await fetch('/api/querydb', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
                 body: JSON.stringify({buyOrder})
-            }).then(response => response.json()
-            ).then(json => {
-                setData(json);
             });
+            let json = await response.json();
+            setData(json);
         }
     }, [router])
 
@@ -46,13 +46,18 @@ export default function Receipt() {
 
 
         let doc = new jsPDF();
-        doc.text("Octonyan loves jsPDF", 35, 25);
-        doc.addImage("/images/logo.jpg", "JPEG", 15, 40, 180, 180);
+        let pageWidth = doc.internal.pageSize.getWidth();
+        let pageHeight = doc.internal.pageSize.getHeight();
 
+        const lado = 90;
 
+        // doc.text("Gracias por comprar con nosotros!", 100, pageWidth/2);
+        // doc.addImage("/images/logo.jpg", "JPEG", pageWidth/2-lado/2, pageHeight/2-lado/2, lado, lado);
+
+        doc.html
 
         setURLpdf(URL.createObjectURL(doc.output("blob")));
-        
+
 
     }, [data]);
 

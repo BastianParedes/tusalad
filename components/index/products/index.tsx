@@ -62,8 +62,12 @@ export default function Products(props: ProducstProps) {
         <Section id='products' tittle='Productos'>
             <div className={styles['products']}>
                 {Object.keys(JSONProducts).map((key) => {
-                    const info: {name: string, price: number, src: string, description: string, included: string} = JSONProducts[key];
-                    return <Product key={key} id={key} name={info.name} price={info.price} src={info.src} description={info.description} included={info.included} openModal={props.openModal} />
+                    const info: {name: string, price: number, src: string, description: string, included: string, enabled: boolean} = JSONProducts[key];
+                    if (info.enabled) {
+                        return <Product key={key} id={key} name={info.name} price={info.price} src={info.src} description={info.description} included={info.included} openModal={props.openModal} />
+                    } else if (info.enabled) {
+                        return <></>
+                    }
                 })}
             </div>
         </Section>

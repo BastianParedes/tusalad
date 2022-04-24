@@ -30,7 +30,7 @@ function Product({ productKey }: any) {
         }
     }
 
-    const productInfo: {name: string, price: number, src: string, description: string, included: string} = JSONProducts[productKey];
+    const productInfo: {name: string, price: number, src: string, description: string, included: string, enabled: boolean} = JSONProducts[productKey];
     return (
         <div className={styles['product-container']}>
             <img className={styles['product-image']} src={'/images/'+productInfo.src} alt="" />
@@ -55,14 +55,7 @@ function Product({ productKey }: any) {
 
 
 export default function Products() {
-    let [cart, setCart]: any = React.useState({});
     let context: any = React.useContext(Context);
-
-    React.useEffect((): void => {
-        setCart(():void => JSON.parse(sessionStorage.getItem('cart') || '{}'));
-    }, [])
-    
-    
 
     return (
         <div className={styles['products']}>

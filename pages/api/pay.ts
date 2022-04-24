@@ -14,13 +14,15 @@ export default async function Pay(request: any, response: any) {
     const DBcart: any = {};
     let amount: number = 0;
     for (let key in request.body.cart) {
-        const product: {name: string, price: number, src: string, description: string, included: string} = JSONProducts[key];
+        const product: {name: string, price: number, src: string, description: string, included: string, enabled: boolean} = JSONProducts[key];
         if (product !== undefined) {//comprueba que la key sea válida
-            if (typeof request.body.cart[key] === 'number') {//comprueba que la cantidad solcitiada de ese producto sea realmente un número
-                let quantity = request.body.cart[key];
-                if (quantity > 0 && Number.isInteger(quantity)) {
-                    amount += quantity * product['price'];
-                    DBcart[key] = quantity;
+            if (product.enabled) {//comprueba que el producto esté disponible
+                if (typeof request.body.cart[key] === 'number') {//comprueba que la cantidad solcitiada de ese producto sea realmente un número
+                    let quantity = request.body.cart[key];
+                    if (quantity > 0 && Number.isInteger(quantity)) {
+                        amount += quantity * product['price'];
+                        DBcart[key] = quantity;
+                    }
                 }
             }
         }
