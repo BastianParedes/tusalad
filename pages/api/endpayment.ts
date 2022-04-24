@@ -17,7 +17,7 @@ async function sendMail(subject: string, text: string) {
 
     await transporter.sendMail({
         from: process.env.mail,
-        to: process.env.mail,
+        to: "bastian.p.trabajo@outlook.com",
         subject,
         text
     });

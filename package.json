@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "jspdf": "^2.5.1",
     "mongodb": "^4.5.0",
     "next": "12.1.2",
     "nodemailer": "^6.7.3",
