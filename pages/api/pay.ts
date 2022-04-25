@@ -51,7 +51,6 @@ export default async function Pay(request: any, response: any) {
             products: DBcart,
             city: request.body.city,
             address: request.body.address,
-            date: new Date()
         };
 
         const insertResult: {acknowledged: boolean, insertedId: any} = await collection.insertOne(DBVaules);
@@ -63,7 +62,7 @@ export default async function Pay(request: any, response: any) {
             buyOrder, //orden de compra
             buyOrder, //session id
             amount,
-            request.headers.origin + '/api/endpayment'  //return URL    //GENERARÁ ERROR?
+            request.headers.origin + '/api/endpayment'
         );
 
         const status = await transaction.status(creation.token);

@@ -4,8 +4,6 @@ const JSONProducts = require('/public/products.json');
 import jsPDF from 'jspdf';
 import React from 'react';
 import { useRouter } from 'next/router';
-import { MdMargin } from 'react-icons/md';
-import { disconnect } from 'process';
 
 
 
@@ -13,53 +11,81 @@ import { disconnect } from 'process';
 export default function Receipt() {
     const router = useRouter();
     const buyOrder = router.query.buyOrder;
-    let [data, setData] = React.useState({});
     let [URLpdf, setURLpdf] = React.useState('');
 
     React.useEffect(async () => {
-        if (buyOrder !== undefined) {
-            let response = await fetch('/api/querydb', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({buyOrder})
-            });
-            let json = await response.json();
-            setData(json);
+        if (buyOrder === undefined) {return;}
+
+        //pide la data de la transacción al backend
+        let response = await fetch('/api/querydb', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({buyOrder})
+        });
+        let transactionData = await response.json();
+
+
+        //crea el pdf
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        const lado = 50;
+        doc.addImage("/images/logo.jpg", "JPEG", pageWidth/2-lado/2, 5, lado, lado);
+
+
+        let text;
+        if (transactionData.status.status === 'AUTHORIZED') {
+            text = 'Gracias por comprar con nosotros!';
+        } else if (transactionData.status.status === 'FAILED') {
+            text = 'La transacción ha sido cancelada. Si aún desea comprar puede hacerlo a travéz de nuestra página';
+        } else if (transactionData.status.status === 'INITIALIZED') {
+            text = 'La transacción aún no se ha completado';
         }
-    }, [router])
+        doc.text(text, (pageWidth - doc.getTextWidth(text))/2, 60);
 
 
-    React.useEffect(() => {
-        if (Object.keys(data).length === 0) {return;}
-        // let doc = new jsPDF();
-        // doc.deletePage(1);
-        // doc.addPage();
-        // doc.internal.pageSize.setWidth(imageWidth);
-        // doc.internal.pageSize.setHeight(imageHeight);
-        // doc.addImage(base64, 'png', 0, 0, imageWidth, imageHeight);
-        // let pageWidth = doc.internal.pageSize.getWidth();
-        // let pageHeight = doc.internal.pageSize.getHeight();
-        // doc.addImage(base64, 'png', leftMargin, topMargin, newImageWidth, newImageHeight);
-        // doc.save('PDF constructor.pdf');
-        // doc.addPage(this.state.pageSize, this.state.pageOrientation);
-        // let imageInfo = doc.getImageProperties(base64);
+
+        let headers = {
+            'Orden de compra': transactionData.status.buy_order,
+            'Estado de la compra': transactionData.status.status,
+            'Monto': transactionData.status.amount.toString(),
+            'Fecha': transactionData.status.transaction_date,
+            'Método de pago': {VD:'Venta Débito',VN:'Venta Normal',VC:'Venta en cuotas',SI:'3 cuotas sin interés',S2:'2 cuotas sin interés',NC:'N Cuotas sin interés',VP:'Venta Prepago'}[transactionData.status.payment_type_code],
+            'Rut': transactionData.rut,
+            'Nombre': transactionData.name,
+            'E-mail': transactionData.e_mail,
+            'Ciudad': transactionData.city
+        };
+
+        let i = 0;
+        for (let header in headers) {
+            doc.text(header, pageWidth/2-doc.getTextWidth(header)-5, 10*i+100);
+            doc.text(headers[header], pageWidth/2+5, 10*i+100);
+            i++;
+        }
+
+        i++;
+        text = 'Productos comprados';
+        doc.text(text, (pageWidth - doc.getTextWidth(text))/2, 10*i+100);
+        i++;
+
+        for (let productID in transactionData.products) {
+            let productData = JSONProducts[productID];
+            let productQuantity = transactionData.products[productID];
+            let productName = productData.name;
+            doc.text(`${productQuantity} x   ${productName}`, 20, 10*i+100);
+            i++;
+        }
+        
 
 
-        let doc = new jsPDF();
-        let pageWidth = doc.internal.pageSize.getWidth();
-        let pageHeight = doc.internal.pageSize.getHeight();
-
-        const lado = 90;
-
-        // doc.text("Gracias por comprar con nosotros!", 100, pageWidth/2);
-        // doc.addImage("/images/logo.jpg", "JPEG", pageWidth/2-lado/2, pageHeight/2-lado/2, lado, lado);
-
-        doc.html
+        // { maxWidth: 50 }
+        
 
         setURLpdf(URL.createObjectURL(doc.output("blob")));
+    }, [router])
 
-
-    }, [data]);
 
 
 
