@@ -66,7 +66,7 @@ export default function Receipt() {
         let i = 0;
         for (let header in headers) {
             doc.text(header, pageWidth/2-doc.getTextWidth(header)-5, 10*i+100);
-            doc.text(headers[header], pageWidth/2+5, 10*i+100);
+            doc.text(headers[header] || '-', pageWidth/2+5, 10*i+100);
             i++;
         }
 
