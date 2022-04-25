@@ -33,22 +33,27 @@ export default function Receipt() {
         const lado = 50;
         doc.addImage("/images/logo.jpg", "JPEG", pageWidth/2-lado/2, 5, lado, lado);
 
-
-        let text;
+        
         if (transactionData.status.status === 'AUTHORIZED') {
-            text = 'Gracias por comprar con nosotros!';
+            let text = 'Gracias por comprar con nosotros!';
+            doc.text(text, (pageWidth - doc.getTextWidth(text))/2, 60);
         } else if (transactionData.status.status === 'FAILED') {
-            text = 'La transacción ha sido cancelada. Si aún desea comprar puede hacerlo a travéz de nuestra página';
+            let text = 'La transacción ha sido cancelada';
+            doc.text(text, (pageWidth - doc.getTextWidth(text))/2, 60);
+            text = 'Si aún desea comprar puede hacerlo a travéz de nuestra página';
+            doc.text(text, (pageWidth - doc.getTextWidth(text))/2, 70);
+            text = 'Volver a la página';
+            doc.textWithLink(text, (pageWidth - doc.getTextWidth(text))/2, 80, { url: location.origin });
         } else if (transactionData.status.status === 'INITIALIZED') {
-            text = 'La transacción aún no se ha completado';
+            let text = 'La transacción aún no se ha completado';
+            doc.text(text, (pageWidth - doc.getTextWidth(text))/2, 60);
         }
-        doc.text(text, (pageWidth - doc.getTextWidth(text))/2, 60);
 
 
 
         let headers = {
             'Orden de compra': transactionData.status.buy_order,
-            'Estado de la compra': transactionData.status.status,
+            'Estado de la compra': {'AUTHORIZED':'Autorizado','FAILED':'Fallido','INITIALIZED':'Incompleto'}[transactionData.status.status],
             'Monto': transactionData.status.amount.toString(),
             'Fecha': transactionData.status.transaction_date,
             'Método de pago': {VD:'Venta Débito',VN:'Venta Normal',VC:'Venta en cuotas',SI:'3 cuotas sin interés',S2:'2 cuotas sin interés',NC:'N Cuotas sin interés',VP:'Venta Prepago'}[transactionData.status.payment_type_code],
@@ -66,7 +71,7 @@ export default function Receipt() {
         }
 
         i++;
-        text = 'Productos comprados';
+        let text = 'Productos comprados';
         doc.text(text, (pageWidth - doc.getTextWidth(text))/2, 10*i+100);
         i++;
 
