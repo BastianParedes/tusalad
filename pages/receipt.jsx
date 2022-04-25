@@ -1,5 +1,3 @@
-// 4051 8842 3993 7763
-// http://localhost:3000/receipt?buyOrder=6265595819d76701e5752604
 const JSONProducts = require('/public/products.json');
 import jsPDF from 'jspdf';
 import React from 'react';
@@ -25,10 +23,14 @@ export default function Receipt() {
         let transactionData = await response.json();
 
 
+
+
+        
+
         //crea el pdf
         const doc = new jsPDF();
+        doc.internal.pageSize.setHeight(0);
         const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
 
         const lado = 50;
         doc.addImage("/images/logo.jpg", "JPEG", pageWidth/2-lado/2, 5, lado, lado);
@@ -59,8 +61,10 @@ export default function Receipt() {
             'Método de pago': {VD:'Venta Débito',VN:'Venta Normal',VC:'Venta en cuotas',SI:'3 cuotas sin interés',S2:'2 cuotas sin interés',NC:'N Cuotas sin interés',VP:'Venta Prepago'}[transactionData.status.payment_type_code],
             'Rut': transactionData.rut,
             'Nombre': transactionData.name,
+            'Teléfono': transactionData.phone,
             'E-mail': transactionData.e_mail,
-            'Ciudad': transactionData.city
+            'Ciudad': transactionData.city,
+            'Dirección': transactionData.address
         };
 
         let i = 0;
@@ -79,15 +83,11 @@ export default function Receipt() {
             let productData = JSONProducts[productID];
             let productQuantity = transactionData.products[productID];
             let productName = productData.name;
-            doc.text(`${productQuantity} x   ${productName}`, 20, 10*i+100);
+            doc.text(`${productQuantity} x   ${productName} (Código: ${productID})`, 20, 10*i+100);
             i++;
         }
+        doc.internal.pageSize.setHeight(-(10*i+100));
         
-
-
-        // { maxWidth: 50 }
-        
-
         setURLpdf(URL.createObjectURL(doc.output("blob")));
     }, [router])
 
@@ -97,7 +97,6 @@ export default function Receipt() {
 
 
     return (
-        // <h1>{JSON.stringify(data)}</h1>
         <div style={{
             width: '100vw',
             height: '100vh',

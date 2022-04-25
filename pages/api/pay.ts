@@ -1,4 +1,3 @@
-
 // 4051 8842 3993 7763
 const JSONProducts: any = require('/public/products.json');
 const mongodb: any = require('mongodb');
@@ -7,17 +6,18 @@ const transbank: any = require('transbank-sdk');
 
 export default async function Pay(request: any, response: any) {
     if (typeof request.body.cart !== 'object') {//termina la ejecución si el body no es un objeto
-        response.json({status: 400});
+        response.json({status: 400, message:'Algo salió mal. Por favor recargue la página y vuelva a intentarlo.'});
         return;
     }
 
+    // calcula el monto total
     const DBcart: any = {};
     let amount: number = 0;
     for (let key in request.body.cart) {
         const product: {name: string, price: number, src: string, description: string, included: string, enabled: boolean} = JSONProducts[key];
         if (product !== undefined) {//comprueba que la key sea válida
             if (product.enabled) {//comprueba que el producto esté disponible
-                if (typeof request.body.cart[key] === 'number') {//comprueba que la cantidad solcitiada de ese producto sea realmente un número
+                if (typeof request.body.cart[key] === 'number') {//comprueba que la cantidad solcitada de ese producto sea realmente un número
                     let quantity = request.body.cart[key];
                     if (quantity > 0 && Number.isInteger(quantity)) {
                         amount += quantity * product['price'];
@@ -28,9 +28,27 @@ export default async function Pay(request: any, response: any) {
         }
     }
 
-
-    if (amount === 0) {// termina la ejecución si el precio total es 0. Esto puede pasar si se altera el sessionStorage ingresando valores inválidos o si un bug hace que no se hayan guardado
-        response.json({status: 400});
+    //detiene la ejecución si el usuario no envía artículos o si falta algún dato
+    if (amount === 0) {
+        response.json({status: 400, message:'No hay objetos en el carro de compra'});
+        return;
+    } else if (request.body.rut === '') {
+        response.json({status: 400, message:'No has ingresado el rut'});
+        return;
+    } else if (request.body.name === '') {
+        response.json({status: 400, message:'No has ingresado el nombre'});
+        return;
+    } else if (request.body.phone === '') {
+        response.json({status: 400, message:'No has ingresado el número de teléfono'});
+        return;
+    } else if (request.body.e_mail === '') {
+        response.json({status: 400, message:'No has ingresado el E-mail'});
+        return;
+    } else if (request.body.city === '') {
+        response.json({status: 400, message:'No has ingresado la ciudad'});
+        return;
+    } else if (request.body.address === '') {
+        response.json({status: 400, message:'No has ingresado la dirección'});
         return;
     }
 
@@ -47,6 +65,7 @@ export default async function Pay(request: any, response: any) {
             delivered: false,
             rut: request.body.rut,
             name: request.body.name,
+            phone: request.body.phone,
             e_mail: request.body.e_mail,
             products: DBcart,
             city: request.body.city,
@@ -81,7 +100,6 @@ export default async function Pay(request: any, response: any) {
 
     }
     catch (error) {
-        console.log(error);
         response.json({status: 400});
     }
     finally {

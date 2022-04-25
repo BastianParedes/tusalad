@@ -15,6 +15,7 @@ export default function Aside() {
         
         const rut: string = event.target.rut.value;
         const name: string = event.target.name.value;
+        const phone: string = event.target.phone.value;
         const e_mail: string = event.target.e_mail.value;
         const city: string = event.target.city.value;
         const address: string = event.target.address.value;
@@ -26,8 +27,14 @@ export default function Aside() {
         } else if (name === '') {
             alert('No has ingresado tu nombre');
             return;
+        } else if (phone === '') {
+            alert('No has ingresado tu teléfono');
+            return;
         } else if (e_mail === '') {
             alert('No has ingresado tu E-mail');
+            return;
+        } else if (phone === '') {
+            alert('No has ingresado tu número de teléfono');
             return;
         } else if (city === '') {
             alert('No has ingresado tu ciudad');
@@ -43,7 +50,7 @@ export default function Aside() {
         fetch('/api/pay', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({rut, name, e_mail, city, address, cart})
+            body: JSON.stringify({rut, name, phone, e_mail, city, address, cart})
         }).then(response => response.json()
         ).then(json => {
             if (json.status === 200) {
@@ -51,8 +58,7 @@ export default function Aside() {
                 setToken(json.token);
                 event.target.submit();
             } else {
-                sessionStorage.setItem('cart', '{}');
-                alert('No hay productos ingresados en el carrito');
+                alert(json.message);
             }
         });
     }
@@ -85,18 +91,20 @@ export default function Aside() {
         <aside className={styles['aside']}>
             <form className={styles['form']} action={url} method='GET' onSubmit={pay}>
                 <h2>Rut:</h2>
-                <input className={styles['input-rut']} type='text' name='rut' placeholder='rut' onChange={fixRut} defaultValue='19.111.648-8' />
+                <input className={styles['input-rut']} type='text' name='rut' placeholder='11.111.111-1' onChange={fixRut} />
                 <h2>Nombre:</h2>
-                <input className={styles['input-name']} type='text' name='name' placeholder='Nombre' defaultValue='Bastián' />
+                <input className={styles['input-name']} type='text' name='name' placeholder='Nombre' />
+                <h2>Teléfono:</h2>
+                <input className={styles['input-phone']} type='text' name='phone' placeholder='9 9999 9999' />
                 <h2>E-mail:</h2>
-                <input className={styles['input-e_mail']} type='text' name='e_mail' placeholder='E-mail' defaultValue='bastian.p@outlook.com' />
+                <input className={styles['input-e_mail']} type='text' name='e_mail' placeholder='ejemplo@ejemplo.com' />
                 <h2>Ciudad:</h2>
                 <select className={styles['input-city']} name='city'>
                     <option value='Puerto Montt'>Puerto Montt</option>
                     <option value='Puerto Varas'>Puerto Varas</option>
                 </select>
                 <h2>Dirección:</h2>
-                <input className={styles['input-address']} type='text' name='address' placeholder='Dirección' defaultValue='Crónica #2202' />
+                <input className={styles['input-address']} type='text' name='address' placeholder='Dirección' />
                 <h2>Monto total:</h2>
                 <h2 className={styles['amount']}>{'$ '+ Object.keys(context.cart).reduce((amount, key) => {
                     let quantity = context.cart[key];
@@ -104,7 +112,7 @@ export default function Aside() {
                     return amount + quantity * price;
                 }, 0)}</h2>
                 <input className={styles['input-submit']} type='submit' value='Pagar' />
-                <input type='hidden' name='token_ws' defaultValue={token} />
+                <input type='hidden' name='token_ws' value={token} />
             </form>
         </aside>
     );

@@ -1,4 +1,4 @@
-// 4051 8842 3993 7763
+
 const mongodb: any = require('mongodb');
 const transbank: any = require('transbank-sdk');
 const nodemailer = require('nodemailer');
@@ -17,7 +17,7 @@ async function sendMail(subject: string, text: string) {
 
     await transporter.sendMail({
         from: process.env.mail,
-        to: "bastian.p.trabajo@outlook.com",
+        to: process.env.mail,
         subject,
         text
     });
@@ -113,7 +113,16 @@ export default async function Db(request: any, response: any) {
 // Para verificar si una transacción fue aprobada, debes confirmar el que código de respuesta response_code sea exactamente 0 y que el estado status sea exactamente AUTHORIZED.
 
 
-
+// AL INICIAR
+// {
+//     amount: 2000,
+//     status: 'INITIALIZED',
+//     buy_order: '62671e600684d8873b019ded',
+//     session_id: '62671e600684d8873b019ded',
+//     accounting_date: '0425',
+//     transaction_date: '2022-04-25T22:19:12.244Z',
+//     installments_number: 0
+// }
 
 
 
@@ -154,8 +163,6 @@ export default async function Db(request: any, response: any) {
 
 
 // PASÓ DEMASIADO TIEMPO
-// http://localhost:3000/api/endpayment?TBK_ORDEN_COMPRA=ORDER-19&TBK_ID_SESION=SESSION-19
-// https://webpay3gint.transbank.cl/webpayserver/error.cgi?TBK_TOKEN=01ab1f1c36286108d6c29f5d47bb53ca556247065126c2439cc1397344c5e999
 // {
 //     vci: 'ABO',
 //     amount: 4000,
